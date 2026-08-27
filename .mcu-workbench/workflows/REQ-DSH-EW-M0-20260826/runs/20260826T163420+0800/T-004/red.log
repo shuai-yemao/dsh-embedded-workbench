@@ -1,0 +1,5 @@
+verify-m0.ps1 must exist
+tests 2
+pass 0
+fail 2
+exit_code 1

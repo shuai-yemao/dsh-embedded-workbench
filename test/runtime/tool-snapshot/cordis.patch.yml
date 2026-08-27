@@ -1,0 +1,4 @@
+# Test-only observer: installed only in the isolated verification profile.
+- insert:
+    - id: dsh-embedded-test-tool-snapshot
+      name: '@dsh-embedded/test-tool-snapshot'

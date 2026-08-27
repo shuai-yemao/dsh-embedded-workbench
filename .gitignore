@@ -1,0 +1,11 @@
+# Local runtime state and installed profile dependencies
+.mcu-workbench/runtime/
+
+# Node dependencies and generated packages
+node_modules/
+*.tgz
+
+# Local editor and OS metadata
+.DS_Store
+Thumbs.db
+.vscode/

@@ -1,0 +1,40 @@
+{
+  "name": "@dsh-embedded/dsh-embedded-workbench",
+  "version": "0.0.0",
+  "description": "DeepSeek Harness embedded development workbench",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js",
+    "./client": "./src/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src/index.js",
+    "src/client.js",
+    "cordis.patch.yml"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "verify:m0": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-m0.ps1",
+    "pack:dry-run": "npm pack --dry-run --json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-settings"
+      ],
+      "platform": "web"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-client-runtime": "0.1.1-rc.1",
+    "@deepseek-ai/dsh-client-ui-settings": "0.1.1-rc.1"
+  }
+}

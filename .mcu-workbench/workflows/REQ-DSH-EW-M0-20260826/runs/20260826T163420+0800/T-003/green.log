@@ -1,0 +1,9 @@
+client_test_exit=0
+client_tests=1
+client_pass=1
+npm_test_exit=0
+npm_tests=4
+npm_pass=4
+syntax_exit=0
+whitespace_matches=0
+evidence_level=host/static

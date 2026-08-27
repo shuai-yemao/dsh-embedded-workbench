@@ -1,0 +1,4 @@
+# M0 only adds its own row and leaves every existing profile row untouched.
+- insert:
+    - id: dsh-embedded-workbench
+      name: '@dsh-embedded/dsh-embedded-workbench'

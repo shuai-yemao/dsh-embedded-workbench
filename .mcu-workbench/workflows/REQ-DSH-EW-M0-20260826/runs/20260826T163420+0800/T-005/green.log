@@ -1,0 +1,7 @@
+observer_tests=2/2
+npm_tests=10/10
+root_pack_files=4
+fixture_pack_in_root=0
+syntax_exit=0
+whitespace_matches=0
+evidence_level=host/static/build-package

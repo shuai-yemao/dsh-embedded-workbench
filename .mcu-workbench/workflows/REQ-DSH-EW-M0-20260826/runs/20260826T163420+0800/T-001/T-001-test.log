@@ -1,0 +1,28 @@
+T-001 test evidence
+cwd=D:\zhuomian\dsh-embedded-workbench
+
+[red-1]
+command=node --experimental-default-type=module --test test/package-contract.test.js
+exit=1
+result=0/2
+failure=package.json and cordis.patch.yml ENOENT
+
+[red-2 after review assertion]
+command=node --test test/package-contract.test.js
+exit=1
+result=1/2
+failure=expected 0.1.1-rc.1, actual ^0.1.1-rc.1
+
+[green]
+command=node --test test/package-contract.test.js
+exit=0
+result=2/2
+
+[green npm entry]
+command=npm test -- --test-reporter=spec
+exit=0
+result=2/2
+
+[quality]
+command=git diff --check
+exit=0

@@ -1,0 +1,29 @@
+T-002 test evidence
+cwd=D:\zhuomian\dsh-embedded-workbench
+
+[red]
+command=node --test test/backend.test.js
+exit=1
+result=0/1
+failure=ERR_MODULE_NOT_FOUND src/index.js
+
+[green]
+command=node --test test/backend.test.js
+exit=0
+result=1/1
+
+[regression]
+command=npm test
+exit=0
+result=3/3
+
+[static]
+command=node --check src/index.js
+exit=0
+trailing_whitespace=0
+
+[review-regression]
+command=node --test test/backend.test.js && npm test && node --check src/index.js
+exit=0
+result=backend 1/1, full 3/3
+coverage=import-time marker, exact exports, undefined return, full context proxy traps

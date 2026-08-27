@@ -1,0 +1,5 @@
+missing fixture: test/runtime/tool-snapshot/index.js
+tests 2
+pass 0
+fail 2
+exit_code 1

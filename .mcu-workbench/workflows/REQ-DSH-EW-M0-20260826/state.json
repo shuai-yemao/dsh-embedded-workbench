@@ -1,0 +1,504 @@
+{
+  "request_id": "REQ-DSH-EW-M0-20260826",
+  "state_version": 1,
+  "project_root": "D:/zhuomian/dsh-embedded-workbench",
+  "spec_version": "v0.1",
+  "plan_version": "v0.1",
+  "task_version": "v0.1",
+  "current_stage": "task-execution",
+  "current_status": "complete",
+  "spec_rigor": "full",
+  "spec_overlays": [
+    "versioned"
+  ],
+  "requirements": [
+    {
+      "id": "P-01",
+      "text": "创建独立于 mcu-workbench 的 DeepSeek Harness 嵌入式开发工作台插件。",
+      "priority": "must",
+      "confidence": "user-confirmed",
+      "evidence": "本会话-2026-0826.md:405-426"
+    },
+    {
+      "id": "P-02",
+      "text": "产品长期覆盖 Harness UI 与底层硬件闭环、LVGL、端侧 AI、异常监控、日志、串口、传感器、平台化代码生成、DevOps/Git 和单元测试。",
+      "priority": "must",
+      "confidence": "user-confirmed",
+      "evidence": "本会话-2026-0826.md:424-426"
+    },
+    {
+      "id": "M0-01",
+      "text": "第一阶段只实现可注册到 DSH 且可观察到名称的最小插件，不注册任何工具。",
+      "priority": "must",
+      "confidence": "user-confirmed",
+      "evidence": "本会话-2026-0826.md:882-884"
+    },
+    {
+      "id": "WF-01",
+      "text": "先完成 RCP、Challenge、Review Gate 和 Spec 用户审查，再进入 Plan/Task/代码。",
+      "priority": "must",
+      "confidence": "user-confirmed",
+      "evidence": "本会话-2026-0826.md:1071-1073; 当前用户请求"
+    }
+  ],
+  "constraints": [
+    {
+      "id": "C-01",
+      "text": "M0 不包含工具、Service/Driver、配置、事件通信、日志、工作流、沙箱、审批、发布或硬件访问。",
+      "confidence": "user-confirmed"
+    },
+    {
+      "id": "C-02",
+      "text": "后续通用能力按 Definition/Provider/Consumer seam 解耦；Provider 与 Consumer 不直接依赖。",
+      "confidence": "confirmed",
+      "evidence": "https://www.runoob.com/deepseek-harness/deepseek-harness-capability-seams.html"
+    },
+    {
+      "id": "C-03",
+      "text": "嵌入式工程调用边界保持 App -> Service -> Platform <- Impl -> Vendor；M0 不接触固件分层。",
+      "confidence": "confirmed",
+      "evidence": "workflow-review-gate/references/software-layer-contract.md"
+    },
+    {
+      "id": "C-04",
+      "text": "静态、配置装配、后端启动、浏览器 UI、目标板和实物证据分级记录，低等级证据不替代高等级结论。",
+      "confidence": "confirmed",
+      "evidence": "workflow-review-gate/SKILL.md"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E-01",
+      "kind": "conversation",
+      "path": "C:/Users/zhang/Documents/mcu-workbench/00_Docs/会话记录/本会话-2026-0826.md",
+      "summary": "19 条用户消息中确认产品定位、能力池、M0 优先级、独立仓库、ESP32-S3 后续目标和 Spec-first 门禁。",
+      "confidence": "confirmed"
+    },
+    {
+      "id": "E-02",
+      "kind": "repository",
+      "path": "D:/zhuomian/dsh-embedded-workbench",
+      "summary": "仓库为 unborn main，无提交；src 和 scripts 目录为空，尚无插件 manifest 或实现。",
+      "confidence": "confirmed"
+    },
+    {
+      "id": "E-03",
+      "kind": "runtime-config",
+      "path": "C:/Users/zhang/AppData/Roaming/dsh-desktop/harness/profiles/web/package.json",
+      "summary": "当前 web profile 使用 @deepseek-ai/dsh 0.1.1-rc.2，并通过 dependencies 与 dsh.profile.bundles 组合插件。",
+      "confidence": "confirmed"
+    },
+    {
+      "id": "E-04",
+      "kind": "local-precedent",
+      "path": "C:/Users/zhang/Documents/mcu-workbench/.dsh-plugin/cordis",
+      "summary": "现有本地插件声明 dsh.bundle.patch，客户端通过 __ModuleLoader__.load 和 settings.section 显示嵌入式工作台。该实现只是先例，不自动成为新插件契约。",
+      "confidence": "confirmed"
+    },
+    {
+      "id": "E-05",
+      "kind": "runtime-command",
+      "command": "C:/Users/zhang/AppData/Roaming/dsh-desktop/harness/profiles/web/node_modules/.bin/dsh.cmd web --dump-config",
+      "summary": "2026-08-26 当前退出码为 1，profile-local rc.2 链缺少 @deepseek-ai/cordis-plugin-group；系统 Node 和 Desktop bundled Node 均失败。失败前的部分输出不构成配置装配通过。",
+      "confidence": "confirmed"
+    },
+    {
+      "id": "E-05A",
+      "kind": "desktop-runtime",
+      "path": "F:/DSH Desktop/resources/app/node_modules/@deepseek-ai/dsh",
+      "summary": "Desktop 当前实际运行 DSH 0.1.1-rc.1；127.0.0.1:5775 根路由 HTTP 200 且含 __DSH_BOOT__，现有 @mcu-workbench/dsh-tools client 路由 HTTP 200。该证据只证明 Desktop rc.1 与现有插件，不证明新 M0 包。",
+      "confidence": "confirmed"
+    },
+    {
+      "id": "E-06",
+      "kind": "firmware-context",
+      "path": "D:/zhuomian/embedded_framework",
+      "summary": "后续硬件闭环工程当前位于 feature/vendor-esp32s3-soc，构建与 Impl/Vendor 仍主要绑定 STM32F411；此事实不进入 M0 施工。",
+      "confidence": "confirmed"
+    },
+    {
+      "id": "E-07",
+      "kind": "toolchain-context",
+      "path": "F:/Espressif/frameworks/esp-idf-v5.4.2",
+      "summary": "ESP-IDF v5.4.2 路径当前存在，VS Code 用户设置指向该路径；当前未枚举到串口设备。只作为后续里程碑约束。",
+      "confidence": "confirmed"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "D-01",
+      "decision": "新插件使用独立仓库 D:/zhuomian/dsh-embedded-workbench。",
+      "confidence": "user-confirmed",
+      "evidence": "本会话-2026-0826.md:731-735; 882-884"
+    },
+    {
+      "id": "D-02",
+      "decision": "里程碑采用固件与工程基座优先、UI 随后、端侧 AI 后置的总体优先级；但插件自身先完成 M0 最小注册。",
+      "confidence": "user-confirmed",
+      "evidence": "本会话-2026-0826.md:484-504; 882-884"
+    },
+    {
+      "id": "D-03",
+      "decision": "后续硬件闭环以正点原子 ESP32-S3、ESP-IDF v5.4.2、LVGL 自集成为当前基线，串口待插入后补证。",
+      "confidence": "user-confirmed",
+      "evidence": "本会话-2026-0826.md:731-735; 882-884"
+    },
+    {
+      "id": "D-04",
+      "decision": "M0 在 DSH Settings 左侧注册独立 settings.section，显示‘嵌入式开发工作台’；后端加载日志与运行态工具集合零增量共同构成验收。",
+      "confidence": "user-confirmed",
+      "evidence": "用户于 2026-08-26 回复‘采用推荐契约’"
+    },
+    {
+      "id": "D-05",
+      "decision": "用户批准 spec.md v0.1，M0 范围、非目标、包名、Settings 显示契约、Desktop rc.1 验收基线和验证边界成为正式 Plan 输入。",
+      "confidence": "user-confirmed",
+      "evidence": "用户于 2026-08-26 回复‘批准spec’"
+    },
+    {
+      "id": "D-06",
+      "decision": "用户在 H-03 选择方案 A：单包双入口最小基线；未增加新约束，方案 B 不进入 M0 施工。",
+      "confidence": "user-confirmed",
+      "evidence": "用户于 2026-08-26 回复‘A’"
+    }
+  ],
+  "open_questions": [
+    {
+      "question_id": "Q-01",
+      "category": "acceptance",
+      "question": "M0 的“显示名称”以 DSH 设置页中的独立 settings.section 可见为准，还是只要求插件/Bundle 列表与启动日志可见？",
+      "why_needed": "它决定是否必须在 M0 引入浏览器 client bundle、slots 依赖与 UI 人工验收。",
+      "recommendation": "采用 settings.section 可见 + 后端加载日志双证据；这与‘Harness 上拥有 UI 界面’的产品方向一致，并可形成明确的人眼验收。",
+      "user_answer": "采用推荐契约",
+      "decision_owner": "user",
+      "confidence": "user-confirmed",
+      "affected_rcp_fields": [
+        "M0 scope",
+        "file construction list",
+        "runtime dependencies",
+        "acceptance V-M0-04",
+        "acceptance V-M0-09"
+      ],
+      "status": "已回填"
+    }
+  ],
+  "user_gates": {
+    "spec": "approved",
+    "plan": "approved",
+    "hard_blocker": "none"
+  },
+  "task_summary": {
+    "total": 9,
+    "completed": 9,
+    "current_task": null
+  },
+  "verify_summary": {
+    "status": "pass",
+    "deviations": [
+      "profile-local DSH rc.2 CLI/dump-config 的依赖闭包仍损坏；M0 只声明 Desktop bundled rc.1 兼容。",
+      "目标板、串口与实物验证属于后续里程碑；V-M0-08 为 not_applicable。"
+    ]
+  },
+  "final_review_summary": {
+    "status": "pass",
+    "spec_version": "v0.1",
+    "traceability": [
+      {
+        "id": "M0-SCOPE-01",
+        "result": "pass",
+        "evidence": "package.json:2-39; cordis.patch.yml:2-4; T-006 runtime composition"
+      },
+      {
+        "id": "M0-SCOPE-02",
+        "result": "pass",
+        "evidence": "src/index.js:1-5; T-006 target Loader/HTTP evidence"
+      },
+      {
+        "id": "M0-SCOPE-03",
+        "result": "pass",
+        "evidence": "src/client.js:19-32; T-008 actual Settings UI/refresh/restart evidence"
+      },
+      {
+        "id": "M0-SCOPE-04",
+        "result": "pass",
+        "evidence": "T-006 host marker/stderr and T-009 exact official rollback evidence"
+      },
+      {
+        "id": "M0-NON-GOALS",
+        "result": "pass",
+        "evidence": "scripts/verify-m0.ps1:116-134; product pack four files; no external firmware/current profile modification"
+      },
+      {
+        "id": "V-M0-01",
+        "result": "pass",
+        "evidence": "test/package-contract.test.js; npm test 12/12; npm run verify:m0"
+      },
+      {
+        "id": "V-M0-02",
+        "result": "pass",
+        "evidence": "scripts/verify-m0.ps1:116-134; T-007 exact runtime tool diff"
+      },
+      {
+        "id": "V-M0-03",
+        "result": "pass",
+        "evidence": "test/backend.test.js; test/client.test.js; T-006 host marker and client loader"
+      },
+      {
+        "id": "V-M0-04",
+        "result": "pass",
+        "evidence": "T-008/execution.md:17-25 Desktop rc.1 browser UI record"
+      },
+      {
+        "id": "V-M0-05",
+        "result": "pass",
+        "evidence": "T-006/dump-config.txt; isolated manifest/lock/bundle comparison"
+      },
+      {
+        "id": "V-M0-06",
+        "result": "pass",
+        "evidence": "T-006/web.stdout.log; client HTTP 200/hash evidence"
+      },
+      {
+        "id": "V-M0-07",
+        "result": "pass",
+        "evidence": "T-009/remove.stdout.log; rollback/final dump; HTTP 404 and Settings absence record"
+      },
+      {
+        "id": "V-M0-08",
+        "result": "not_applicable",
+        "evidence": "Spec M0 explicit hardware exclusion; no target-board claim"
+      },
+      {
+        "id": "V-M0-09",
+        "result": "pass",
+        "evidence": "T-007/baseline-tools.json; candidate-tools.json; tool-diff.json; verifier exit 0"
+      }
+    ],
+    "solid": {
+      "status": "pass",
+      "srp": "pass",
+      "ocp": "pass",
+      "lsp": "pass",
+      "isp": "pass",
+      "dip": "not_applicable",
+      "evidence": "package/patch/host/client/verification separation; cleanup test; minimal injection/peer dependency contract"
+    },
+    "findings": [
+      {
+        "severity": "non_blocking",
+        "summary": "Spec 的 pending/not-run 是实施前历史字段；最终结果以本 state 的 traceability 为准，未改写批准需求正文。"
+      },
+      {
+        "severity": "non_blocking",
+        "summary": "无独立 build/typecheck 脚本；以 Desktop Node syntax check、12/12 tests、dry pack、真实 rc.1 Loader 为等效证据。"
+      },
+      {
+        "severity": "non_blocking",
+        "summary": "unborn main 的普通 git diff --check 不覆盖未跟踪文件；本轮逐文件 git diff --no-index --check 已通过。"
+      }
+    ],
+    "quality_gate": {
+      "mode": "final-gate",
+      "status": "pass",
+      "evidence": "npm test 12/12; verify:m0; exact runtime tool diff; dry pack four files; Desktop rc.1 Loader/UI/rollback; JS syntax and no-index whitespace checks",
+      "unverified": [
+        "Desktop rc.2 compatibility",
+        "MCU target board, serial and physical hardware validation"
+      ]
+    }
+  },
+  "blockers": [],
+  "rcp": {
+    "version": "v0.1",
+    "status": "challenged",
+    "workflow_status": "待用户审查",
+    "target_deliverable": "详细 spec.md；不生成 RCP.md、plan.md 或 task.md",
+    "risk_reasons": [
+      "长期维护的独立插件与公共包契约",
+      "后续跨 DSH UI、工具、Service/Driver、多个插件依赖和嵌入式硬件工程",
+      "关联 dsh-embedded-workbench 与 embedded_framework 两个仓库"
+    ],
+    "minimum_artifacts": [
+      "spec.md",
+      "后续批准后生成 plan.md",
+      "后续批准后生成 task.md",
+      "分级测试与检查证据"
+    ],
+    "escalation_triggers": [
+      "M0 引入工具或持久状态",
+      "改变 DSH 公共 API 或 UI slot 契约",
+      "接入本机命令、串口、烧录、调试或网络",
+      "进入发布、权限、密钥或审批实现"
+    ],
+    "purpose_conclusion": "user-confirmed",
+    "feasibility_conclusion": "M0 可行；兼容与验收基线限定为当前 Desktop DSH rc.1，profile-local rc.2 明确排除在本轮成功声明之外",
+    "scope_conclusion": "产品范围、M0 直接范围、非目标和名称显示契约均已确认。",
+    "acceptance_gaps": [
+      "尚无新插件静态、包测试、真实 Loader、启动和 UI 执行证据；这些是实施后的验收项"
+    ],
+    "unresolved_risks": [
+      "Desktop rc.1、web profile rc.2 与 mcu 插件 dsh-tools rc.1 存在版本漂移；M0 不宣称 rc.2 兼容"
+    ],
+    "required_review_gate_checks": [
+      "包 manifest 与 dsh.bundle.patch 是否匹配当前 0.1.1-rc.2 profile",
+      "M0 是否确实不注册工具或服务",
+      "settings.section、后端加载日志和零工具集合差是否全部满足",
+      "安装/卸载是否可回滚且不覆盖现有 profile bundle"
+    ],
+    "handoff_status": "可交接"
+  },
+  "integration_plan": {
+    "status": "approved",
+    "h03_gate": "approved",
+    "input_spec": "D:/zhuomian/dsh-embedded-workbench/00_Docs/04_需求文档/spec.md",
+    "output_plan": "D:/zhuomian/dsh-embedded-workbench/00_Docs/04_需求文档/plan.md",
+    "common_goal": "交付可由 Desktop DSH rc.1 加载、在 Settings 显示‘嵌入式开发工作台’且不增加任何工具的 M0 插件。",
+    "selected_option": "A",
+    "selection_evidence": "用户于 2026-08-26 回复‘A’",
+    "new_constraints": "none",
+    "review": {
+      "result": "passed",
+      "spec_changed": false,
+      "closed_blockers": [],
+      "open_blockers": [],
+      "review_note": "三个复审代理因当前协作额度限制未返回新结论；用户要求继续后，由 embedded-lead 基于既有代理证据和当前工作区完成本地代审，未将失败调用记为已完成代理审查。",
+      "execution_guards": [
+        "工具集合观察器必须先确认 Desktop rc.1 的只读注册表 API；无可用 API 时停止，不能以静态扫描替代运行态集合差。",
+        "所有安装、启动和卸载只允许写入项目内隔离 DSH_HOME，不得修改当前用户 profile。",
+        "profile-local rc.2 不在 M0 兼容声明内。"
+      ]
+    },
+    "candidate_a": {
+      "name": "单包双入口最小基线",
+      "summary": "一个 package 同时提供 backend 与 web client，bundle patch 只插入一个 row。",
+      "files": [
+        "package.json",
+        "cordis.patch.yml",
+        "src/index.js",
+        "src/client.js",
+        "test/*",
+        "scripts/verify-m0.ps1"
+      ],
+      "tradeoff": "改动和运行时面最小、最容易验证与回滚；M3 出现首个可替换能力时再按真实 seam 拆包。",
+      "recommended": true
+    },
+    "candidate_b": {
+      "name": "Bundle + Host + UI 工作区拆包",
+      "summary": "根 bundle 只负责 composition，内部 Host 与 UI 包分别作为 Cordis row 和 client module。",
+      "files": [
+        "package.json",
+        "packages/bundle/*",
+        "packages/host/*",
+        "packages/ui/*",
+        "test/*",
+        "scripts/verify-m0.ps1"
+      ],
+      "tradeoff": "边界更早独立、便于后续分别演进；M0 包、row、依赖和验证数量增加，当前没有真实能力 seam 支撑，存在过早拆分风险。",
+      "recommended": false
+    }
+  },
+  "task_breakdown": {
+    "status": "deliverable",
+    "output_task": "D:/zhuomian/dsh-embedded-workbench/00_Docs/04_需求文档/task.md",
+    "task_count": 9,
+    "critical_chain": "T-001 -> T-002/T-003 -> T-004 -> T-005 -> T-006 -> T-007 -> T-008 -> T-009",
+    "parallel_groups": [
+      {
+        "id": "G-01",
+        "tasks": [
+          "T-002",
+          "T-003"
+        ],
+        "execution_note": "逻辑可并行；workflow-task-execution 默认仍一次只修改一个 Task 范围。"
+      }
+    ],
+    "primary_implementation_skill": "mcu-workbench:workflow-ai-collab",
+    "execution_mode": "auto_until_final_check",
+    "open_blockers": []
+  },
+  "task_execution": {
+    "mode": "auto_until_final_check",
+    "run_id": "20260826T163420+0800",
+    "current_task": null,
+    "allocation_id": null,
+    "primary_agent": null,
+    "support_agents": [
+      "verification-engineer"
+    ],
+    "primary_implementation_skill": "mcu-workbench:tools-verification",
+    "supporting_skills": [
+      "mcu-workbench:tools-quality"
+    ],
+    "scope_boundary": [
+      "所有 T-001..T-009 证据目录",
+      "最终 Spec 追踪矩阵与 final review"
+    ],
+    "started_at": "2026-08-27T10:19:05+08:00",
+    "completed_tasks": [
+      {
+        "task_id": "T-001",
+        "allocation_id": "T-001-20260826T163420+0800",
+        "status": "pass",
+        "evidence": ".mcu-workbench/workflows/REQ-DSH-EW-M0-20260826/runs/20260826T163420+0800/T-001",
+        "solid_status": "pass"
+      },
+      {
+        "task_id": "T-002",
+        "allocation_id": "T-002-20260826T165100+0800",
+        "status": "pass",
+        "evidence": ".mcu-workbench/workflows/REQ-DSH-EW-M0-20260826/runs/20260826T163420+0800/T-002",
+        "solid_status": "pass"
+      },
+      {
+        "task_id": "T-003",
+        "allocation_id": "T-003-20260826T170809+0800",
+        "status": "pass",
+        "evidence": ".mcu-workbench/workflows/REQ-DSH-EW-M0-20260826/runs/20260826T163420+0800/T-003",
+        "solid_status": "pass"
+      },
+      {
+        "task_id": "T-004",
+        "allocation_id": "T-004-20260826T172118+0800",
+        "status": "pass",
+        "evidence": ".mcu-workbench/workflows/REQ-DSH-EW-M0-20260826/runs/20260826T163420+0800/T-004",
+        "solid_status": "pass"
+      },
+      {
+        "task_id": "T-005",
+        "allocation_id": "T-005-20260826T214344+0800",
+        "status": "pass",
+        "evidence": ".mcu-workbench/workflows/REQ-DSH-EW-M0-20260826/runs/20260826T163420+0800/T-005",
+        "solid_status": "pass"
+      },
+      {
+        "task_id": "T-006",
+        "allocation_id": "T-006-20260826T214855+0800",
+        "status": "pass",
+        "evidence": ".mcu-workbench/workflows/REQ-DSH-EW-M0-20260826/runs/20260826T163420+0800/T-006",
+        "solid_status": "pass"
+      },
+      {
+        "task_id": "T-007",
+        "allocation_id": "T-007-20260826T220206+0800",
+        "status": "pass",
+        "evidence": ".mcu-workbench/workflows/REQ-DSH-EW-M0-20260826/runs/20260826T163420+0800/T-007",
+        "solid_status": "pass"
+      },
+      {
+        "task_id": "T-008",
+        "allocation_id": "T-008-20260826T221410+0800",
+        "status": "pass",
+        "evidence": ".mcu-workbench/workflows/REQ-DSH-EW-M0-20260826/runs/20260826T163420+0800/T-008",
+        "solid_status": "pass"
+      },
+      {
+        "task_id": "T-009",
+        "allocation_id": "T-009-20260826T222243+0800",
+        "status": "pass",
+        "evidence": ".mcu-workbench/workflows/REQ-DSH-EW-M0-20260826/runs/20260826T163420+0800/T-009",
+        "solid_status": "pass"
+      }
+    ]
+  },
+  "updated_at": "2026-08-27T10:28:00+08:00"
+}

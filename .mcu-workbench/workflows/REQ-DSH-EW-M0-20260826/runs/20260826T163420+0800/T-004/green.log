@@ -1,0 +1,7 @@
+verify_tests=4/4
+npm_tests=8/8
+verify_m0_exit=0
+pack_dry_run_exit=0
+powershell_syntax_exit=0
+whitespace_matches=0
+evidence_levels=static,host,build-package

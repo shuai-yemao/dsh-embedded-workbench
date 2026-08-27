@@ -1,0 +1,6 @@
+
+dependencies:
+- @dsh-embedded/test-tool-snapshot file:D:/zhuomian/dsh-embedded-workbench/test/runtime/tool-snapshot
+
+Already up to date
+Done in 952ms using pnpm v10.33.0
