@@ -13,11 +13,13 @@
   "files": [
     "src/index.js",
     "src/client.js",
+    "src/workbench-lifecycle.js",
     "cordis.patch.yml"
   ],
   "scripts": {
     "test": "node --test test/*.test.js",
     "verify:m0": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-m0.ps1",
+    "verify:m1": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-m1.ps1",
     "pack:dry-run": "npm pack --dry-run --json"
   },
   "dsh": {

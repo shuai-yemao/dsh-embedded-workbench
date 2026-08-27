@@ -1,0 +1,8 @@
+# T-008 isolated verification overlay; not a product or user-profile change.
+- id: hmr
+  disabled: false
+  config:
+    root:
+      - 'D:/zhuomian/dsh-embedded-workbench/.mcu-workbench/runtime/20260827T000002+0800/dsh-home/profiles/web'
+- id: dsh-embedded-workbench
+  name: '@dsh-embedded/dsh-embedded-workbench'

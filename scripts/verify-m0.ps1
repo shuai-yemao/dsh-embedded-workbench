@@ -77,6 +77,7 @@ try {
 	Assert-ExactStringArray -Actual @($manifest.files) -Expected @(
 		"src/index.js",
 		"src/client.js",
+		"src/workbench-lifecycle.js",
 		"cordis.patch.yml"
 	) -Name "package files"
 

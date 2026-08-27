@@ -112,7 +112,8 @@ test("verification script and package tarball stay inside the read-only M0 bound
 		"cordis.patch.yml",
 		"package.json",
 		"src/client.js",
-		"src/index.js"
+		"src/index.js",
+		"src/workbench-lifecycle.js"
 	]);
 });
 

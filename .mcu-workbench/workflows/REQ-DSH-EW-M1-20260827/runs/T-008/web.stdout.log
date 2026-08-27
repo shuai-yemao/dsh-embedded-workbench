@@ -1,0 +1,4 @@
+[dsh-embedded-workbench] M0 loaded
+{"lifecycle":{"instance_id":"workbench-mtba1d59-xe8qo4","operation":"start","from":"CREATED","to":"STARTING","result":"started","error_code":null,"duration_ms":0,"cleanup_complete":false,"remaining_resource_count":0}}
+{"lifecycle":{"instance_id":"workbench-mtba1d59-xe8qo4","operation":"start","from":"STARTING","to":"RUNNING","result":"ok","error_code":null,"duration_ms":0,"cleanup_complete":false,"remaining_resource_count":0}}
+dsh web: http://127.0.0.1:40256

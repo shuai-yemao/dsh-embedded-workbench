@@ -1,0 +1,90 @@
+{
+  "request_id": "REQ-DSH-EW-M1-20260827",
+  "state_version": 1,
+  "project_root": "D:/zhuomian/dsh-embedded-workbench",
+  "base_revision": "7ebd7ff280fc124a22e77f371a9e10cc69d7260f",
+  "current_stage": "final-review",
+  "current_status": "final_review_passed",
+  "spec_version": "v0.1",
+  "spec_path": "00_Docs/04_需求文档/REQ-DSH-EW-M1-20260827/spec.md",
+  "spec_rigor": "full",
+  "spec_overlays": ["versioned"],
+  "requirements": [
+    {
+      "id": "M1-01",
+      "text": "每个 Cordis Host Fiber 单次激活周期创建一个私有 WorkbenchLifecycle 对象，由 Cordis 激活/卸载驱动。",
+      "priority": "must",
+      "confidence": "user-confirmed"
+    },
+    {
+      "id": "M1-02",
+      "text": "对象只负责本插件内部状态、资源登记、启动、失败回滚和清理。",
+      "priority": "must",
+      "confidence": "user-confirmed"
+    },
+    {
+      "id": "M1-03",
+      "text": "不注册 Service、Tool，不进入全局 Registry，不发布公共能力接口。",
+      "priority": "must",
+      "confidence": "user-confirmed"
+    },
+    {
+      "id": "M1-04",
+      "text": "启动/清理失败、并发幂等和 1000 ms 清理预算按已确认语义验收。",
+      "priority": "must",
+      "confidence": "user-confirmed"
+    }
+  ],
+  "decisions": [
+    {"id": "Q-M1-01", "decision": "1 Fiber activation epoch : 1 private WorkbenchLifecycle; no Registry/Service/Tool/public capability", "confidence": "user-confirmed"},
+    {"id": "Q-M1-02", "decision": "startup rollback; terminal FAILED with cleanup diagnostics; no object resurrection", "confidence": "user-confirmed"},
+    {"id": "Q-M1-03", "decision": "idempotent start/dispose with shared in-flight Promise; stop request during start prevents RUNNING", "confidence": "user-confirmed"},
+    {"id": "Q-M1-04", "decision": "async cleanup budget 1000 ms; timeout is FAILED with residual diagnostics; no force-kill/retry", "confidence": "user-confirmed"}
+  ],
+  "open_questions": [],
+  "evidence": [
+    {"id": "E-M1-01", "kind": "m0-workflow", "path": ".mcu-workbench/workflows/REQ-DSH-EW-M0-20260826/state.json", "summary": "M0 9/9 Task、Verify 和 Final Review 通过", "confidence": "confirmed"},
+    {"id": "E-M1-02", "kind": "source", "path": "src/index.js", "summary": "当前 Host 只有无状态 apply/load marker", "confidence": "confirmed"},
+    {"id": "E-M1-03", "kind": "runtime-source", "path": "F:/DSH Desktop/resources/app/node_modules/@deepseek-ai/cordis/lib/index.js", "summary": "rc.1 Cordis Fiber/effect/async disposer/await/restart 语义", "confidence": "confirmed"}
+  ],
+  "user_gates": {"spec": "approved", "plan": "approved", "hard_blocker": "none"},
+  "challenge": {
+    "status": "complete",
+    "purpose_conclusion": "user-confirmed",
+    "feasibility_conclusion": "可行",
+    "scope_conclusion": "M1 范围、非目标、状态、所有权、失败和并发契约已由用户确认；V-M1-12 已用户确认延期至后续里程碑。",
+    "acceptance_gaps": ["V-M1-12 Desktop rc.1 Loader live reload/disable-re-enable 延期至后续里程碑"],
+    "unresolved_risks": ["rc.2 依赖闭包损坏；不纳入 M1 兼容声明"],
+    "handoff_status": "可交接"
+  },
+  "review_gate": {"status": "approved-with-v-m1-12-deferred", "required_checks": ["四张审计清单", "SOLID", "M0 语义回归", "真实 Cordis disposer", "rc.1 Loader 现有证据", "package files/dry-pack", "1000ms deadline"], "last_review_findings": ["补充一次性受管 deadline 与晚到 Promise 语义", "补充 STARTING×dispose 握手和 start 自回滚", "允许私有模块进入 files 但不新增 exports", "M0 四文件断言改为语义不变量", "Desktop rc.1 不以进程重启替代 disposer 证据", "用户确认 V-M1-12 延期至后续里程碑"]},
+  "integration_plan": {"selected_option": "A", "status": "approved", "path": "00_Docs/04_需求文档/REQ-DSH-EW-M1-20260827/plan.md", "user_gate": "approved"},
+  "artifacts": {"spec": "00_Docs/04_需求文档/REQ-DSH-EW-M1-20260827/spec.md", "plan": "00_Docs/04_需求文档/REQ-DSH-EW-M1-20260827/plan.md", "task": "00_Docs/04_需求文档/REQ-DSH-EW-M1-20260827/task.md"},
+  "changed_files": ["00_Docs/04_需求文档/REQ-DSH-EW-M1-20260827/spec.md", "00_Docs/04_需求文档/REQ-DSH-EW-M1-20260827/plan.md", "00_Docs/04_需求文档/REQ-DSH-EW-M1-20260827/task.md", ".mcu-workbench/workflows/REQ-DSH-EW-M1-20260827/state.json"],
+  "final_review": {
+    "status": "pass",
+    "spec_version": "v0.1",
+    "traceability": [
+      {"id": "M1-01", "result": "pass", "evidence": "src/index.js:5-11; test/cordis-host.test.js; T-007 real Cordis disposer"},
+      {"id": "M1-02", "result": "pass", "evidence": "src/workbench-lifecycle.js:31-204; test/lifecycle.test.js; npm test 21/21"},
+      {"id": "M1-03", "result": "pass", "evidence": "package.json exports/files; scripts/verify-m1.ps1; forbidden capability scan"},
+      {"id": "M1-04", "result": "pass", "evidence": "test/lifecycle.test.js:62-148; verify:m1 timeout and diagnostics checks"}
+    ],
+    "solid": {"status": "pass", "srp": "pass", "ocp": "pass", "lsp": "pass", "isp": "pass", "dip": "pass", "evidence": "thin Host Adapter, private lifecycle module, injected seams, package boundary and Cordis host test"},
+    "quality_gate": {
+      "mode": "final-gate",
+      "status": "pass",
+      "plugin_hard_gate": "pass",
+      "evidence": "npm test 21/21; verify:m0; verify:m1; npm pack --dry-run; node --check; git diff --check and untracked no-index diff check",
+      "unverified": ["V-M1-12: 同一 Desktop rc.1 Loader 生命周期的 live reload/disable-re-enable 入口；已按用户决策延期至后续里程碑"],
+      "next_handoff": "git-commit-and-push"
+    },
+    "findings": [
+      {"id": "B-04", "severity": "deferred", "summary": "Settings UI 人工复核已通过，但 Desktop rc.1 同一 Loader live reload/disable-re-enable 仍无可用入口；该项已按用户决策延期至后续里程碑，不阻塞 M1。", "evidence": ".mcu-workbench/workflows/REQ-DSH-EW-M1-20260827/runs/T-009/execution.md; F:/DSH Desktop/resources/app/node_modules/@deepseek-ai/dsh-web-app/cordis.patch.yml; events.jsonl:m1-b04-deferred", "next_action": "在后续里程碑重新建立 Spec/Plan/Task，并提供受控 reload seam。"},
+      {"id": "B-06", "severity": "non_blocking", "summary": "rc.2 依赖闭包损坏，按 Spec 明确排除，不影响 rc.1 范围结论。"},
+      {"id": "Q-01", "severity": "non_blocking", "summary": "无独立 typecheck/build、Cppcheck 或 MISRA 入口；已使用 Node syntax check、主机测试、verifier 和 dry-pack 等效证据，未宣称目标板质量结论。"}
+    ]
+  },
+  "next_handoff": "git-commit-and-push",
+  "updated_at": "2026-08-27T20:00:00+08:00"
+}

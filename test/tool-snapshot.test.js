@@ -61,7 +61,12 @@ test("test-only tool snapshot fixture stays outside the product package", () => 
 
 	const rootManifest = JSON.parse(readFileSync(path.join(projectRoot, "package.json"), "utf8"));
 	assert.doesNotMatch(JSON.stringify(rootManifest), /tool-snapshot|dsh-tools/);
-	assert.deepEqual(rootManifest.files, ["src/index.js", "src/client.js", "cordis.patch.yml"]);
+	assert.deepEqual(rootManifest.files, [
+		"src/index.js",
+		"src/client.js",
+		"src/workbench-lifecycle.js",
+		"cordis.patch.yml"
+	]);
 
 	const fixtureManifest = JSON.parse(readFileSync(observerPackagePath, "utf8"));
 	assert.equal(fixtureManifest.name, "@dsh-embedded/test-tool-snapshot");

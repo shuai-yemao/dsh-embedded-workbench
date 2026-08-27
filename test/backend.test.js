@@ -3,7 +3,7 @@ import test from "node:test";
 
 const marker = "[dsh-embedded-workbench] M0 loaded";
 
-test("host apply logs its marker without accessing context services", async () => {
+test("host apply creates a private lifecycle and returns one disposer", async () => {
 	const messages = [];
 	const originalLog = console.log;
 	const rejectContextUse = (operation, property) => {
@@ -33,10 +33,14 @@ test("host apply logs its marker without accessing context services", async () =
 
 		assert.deepEqual(Object.keys(host).sort(), ["apply", "name"]);
 		assert.equal(host.name, "dsh-embedded-workbench");
-		assert.equal(result, undefined);
+		assert.equal(typeof result?.then, "function");
+		const disposer = await result;
+		assert.equal(typeof disposer, "function");
+		await disposer();
 	} finally {
 		console.log = originalLog;
 	}
 
-	assert.deepEqual(messages, [[marker]]);
+	assert.deepEqual(messages[0], [marker]);
+	assert.ok(messages.slice(1).every(([entry]) => typeof entry === "string"));
 });

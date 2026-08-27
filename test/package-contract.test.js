@@ -43,6 +43,7 @@ test("package exposes one M0 host/client bundle contract", async () => {
 	assert.deepEqual(manifest.files, [
 		"src/index.js",
 		"src/client.js",
+		"src/workbench-lifecycle.js",
 		"cordis.patch.yml"
 	]);
 	assert.deepEqual(Object.keys(manifest.dsh).sort(), ["bundle", "client"]);
