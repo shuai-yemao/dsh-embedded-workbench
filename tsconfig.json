@@ -1,0 +1,9 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/workbench-contracts" },
+    { "path": "./packages/provider-reference" },
+    { "path": "./packages/workbench-core" },
+    { "path": "./packages/workbench-ui" }
+  ]
+}

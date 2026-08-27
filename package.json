@@ -4,6 +4,12 @@
   "description": "DeepSeek Harness embedded development workbench",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "packages/workbench-contracts",
+    "packages/workbench-core",
+    "packages/workbench-ui",
+    "packages/provider-reference"
+  ],
   "exports": {
     ".": "./src/index.js",
     "./client": "./src/client.js",
@@ -17,10 +23,15 @@
     "cordis.patch.yml"
   ],
   "scripts": {
-    "test": "node --test test/*.test.js",
+    "build": "tsc -b && node scripts/generate-typert.mjs && node scripts/build-client.mjs",
+    "test": "npm run test:root && npm run test --workspaces --if-present",
+    "test:root": "node --test test/*.test.js",
     "verify:m0": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-m0.ps1",
     "verify:m1": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-m1.ps1",
-    "pack:dry-run": "npm pack --dry-run --json"
+    "verify:m2": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-m2.ps1",
+    "verify:m2:runtime": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-m2-runtime.ps1",
+    "pack:dry-run": "npm pack --dry-run --json",
+    "prepack": "npm run build && npm run verify:m2"
   },
   "dsh": {
     "bundle": {
@@ -34,9 +45,35 @@
       "platform": "web"
     }
   },
+  "dependencies": {
+    "@dsh-embedded/workbench-contracts": "0.0.0",
+    "@dsh-embedded/workbench-core": "0.0.0",
+    "@dsh-embedded/workbench-ui": "0.0.0"
+  },
+  "optionalDependencies": {
+    "@dsh-embedded/provider-reference": "0.0.0"
+  },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "^4.0.1",
-    "@deepseek-ai/dsh-client-runtime": "0.1.1-rc.1",
-    "@deepseek-ai/dsh-client-ui-settings": "0.1.1-rc.1"
+    "@deepseek-ai/cordis": "4.0.1",
+    "@deepseek-ai/dsh-client-runtime": "0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-ui-settings": "0.1.1-rc.2"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "4.0.1",
+    "@deepseek-ai/dsh-api-gateway": "0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-runtime": "0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-ui-settings": "0.1.1-rc.2",
+    "@deepseek-ai/dsh-settings": "0.1.1-rc.2",
+    "@deepseek-ai/dsh-typert-generator": "0.1.1-rc.2",
+    "@deepseek-ai/dsh-typert-protocol": "0.1.1-rc.2",
+    "@deepseek-ai/dsh-typert-registry": "0.1.1-rc.2",
+    "@deepseek-ai/schemastery": "3.18.1",
+    "@types/node": "26.4.0",
+    "@types/react": "18.3.1",
+    "esbuild": "0.28.2",
+    "react": "18.2.0",
+    "tsx": "4.23.12",
+    "typescript": "6.0.3",
+    "zod": "4.4.3"
   }
 }

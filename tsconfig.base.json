@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022", "DOM"],
+    "strict": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@dsh-embedded/workbench-contracts": ["packages/workbench-contracts/src/index.ts"],
+      "@dsh-embedded/workbench-core": ["packages/workbench-core/src/index.ts"],
+      "@dsh-embedded/workbench-ui": ["packages/workbench-ui/src/client.tsx"],
+      "@dsh-embedded/provider-reference": ["packages/provider-reference/src/index.ts"]
+    }
+  }
+}

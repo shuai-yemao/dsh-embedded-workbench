@@ -9,7 +9,7 @@
 |---|---|
 | request_id | `REQ-DSH-EW-M2-20260827` |
 | 任务清单版本 | `v0.1` |
-| 状态 | `可交付` |
+| 状态 | `执行中` |
 | 项目路径与提交 | `D:\zhuomian\dsh-embedded-workbench @ main / 04f0a4403e86a6583b6ef2dd649cb81fa12e48dc` |
 | 输入 spec.md | `D:\zhuomian\dsh-embedded-workbench\00_Docs\04_需求文档\REQ-DSH-EW-M2-20260827\spec.md` |
 | 输入 plan.md | `D:\zhuomian\dsh-embedded-workbench\00_Docs\04_需求文档\REQ-DSH-EW-M2-20260827\plan.md` |
@@ -61,8 +61,8 @@ T-012 rc.2 最终验证与交接
 
 | 顺序 | task_id | 任务名称 | 前置任务 | 主 Agent | 主实现 Skill | 辅助 Skill | 验证等级 | 状态 |
 |---:|---|---|---|---|---|---|---|---|
-| 1 | T-001 | 建立 workspace、精确工具链和基线门禁 | none | `toolchain-engineer` | `mcu-workbench:tools-build` | `mcu-workbench:tdd` | static/host | ready |
-| 2 | T-002 | 实现无框架泄漏的 Contracts | T-001 | `system-architect` | `mcu-workbench:codebase-design` | `mcu-workbench:tdd` | static/host/build | not-run |
+| 1 | T-001 | 建立 workspace、精确工具链和基线门禁 | none | `toolchain-engineer` | `mcu-workbench:tools-build` | `mcu-workbench:tdd` | static/host | pass |
+| 2 | T-002 | 实现无框架泄漏的 Contracts | T-001 | `system-architect` | `mcu-workbench:codebase-design` | `mcu-workbench:tdd` | static/host/build | ready |
 | 3 | T-003 | 迁移 Reference Provider 私有生命周期 | T-002 | `firmware-engineer` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tdd` | host/build | not-run |
 | 4 | T-004 | 实现 Catalog 与 import 前兼容检查 | T-003 | `system-architect` | `mcu-workbench:codebase-design` | `mcu-workbench:tdd` | host/build | not-run |
 | 5 | T-005 | 实现单能力 Gate 与 Core Controller | T-004 | `firmware-engineer` | `mcu-workbench:tdd` | `mcu-workbench:codebase-design` | host | not-run |
@@ -90,7 +90,7 @@ T-012 rc.2 最终验证与交接
 | supporting_skills | `mcu-workbench:tdd`, `mcu-workbench:tools-verification` |
 | allocation_evidence | workspace、tsconfig、精确依赖和 lockfile 属于构建边界；Plan 要求先运行 M1 基线再写红灯测试。 |
 | confidence | `confirmed` |
-| status | `ready` |
+| status | `pass` |
 
 #### 目标与范围
 
@@ -116,7 +116,7 @@ T-012 rc.2 最终验证与交接
 | 命令或条件 | `npm test`; `npm run verify:m0`; `npm run verify:m1`; `node --test test/workspace-contract.test.js` |
 | 预期结果 | 基线全绿；红灯先出现；实现后 workspace 测试通过；rc.1 不再作为 M2 direct dependency。 |
 | 产物位置 | Git commit 与测试输出 |
-| 当前状态 | `not-run` |
+| 当前状态 | `pass`：基线 `npm test` 21/21、`verify:m0`、`verify:m1` 均通过；workspace 测试红灯 3/3 后绿灯 3/3；`npm install --ignore-scripts` 和 `npm ls --depth=0` 通过。 |
 
 - 失败：基线失败先定位环境/历史回归；依赖解析失败不放宽版本。
 - 回滚：revert T-001 独立提交；不改写 M0/M1 历史。
@@ -512,7 +512,7 @@ T-012 rc.2 最终验证与交接
 
 | task_id | 验收项 | 证据等级 | 命令/条件 | 预期结果 | 状态 |
 |---|---|---|---|---|---|
-| T-001 | workspace 与精确 rc.2 工具链 | static/host | workspace test + M0/M1 baseline | 单入口四 workspace、版本精确 | not-run |
+| T-001 | workspace 与精确 rc.2 工具链 | static/host | workspace test + M0/M1 baseline | 单入口四 workspace、版本精确 | pass |
 | T-002 | Contracts 稳定且无框架泄漏 | static/host/build | contracts test + tsc + rg | JSON-safe、兼容检查、零框架依赖 | not-run |
 | T-003 | Reference 实例和资源隔离 | host/build | provider test + tsc | 故障/超时不跨实例 | not-run |
 | T-004 | import 前兼容 | host | catalog/resolver tests | missing/incompatible import=0 | not-run |

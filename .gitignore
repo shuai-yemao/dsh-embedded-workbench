@@ -3,6 +3,9 @@
 
 # Node dependencies and generated packages
 node_modules/
+lib/
+packages/*/lib/
+artifacts/m2/
 *.tgz
 
 # Local editor and OS metadata

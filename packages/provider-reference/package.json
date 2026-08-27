@@ -1,0 +1,29 @@
+{
+  "name": "@dsh-embedded/provider-reference",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": ["lib", "package.json"],
+  "dependencies": {
+    "@dsh-embedded/workbench-contracts": "0.0.0"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "4.0.1"
+  },
+  "dshEmbedded": {
+    "provider": {
+      "capability_id": "reference.lifecycle",
+      "display_name": "Reference Lifecycle",
+      "provider_version": "0.0.0",
+      "contract_version": "1.0.0",
+      "apply_mode": "LIVE"
+    }
+  }
+}
