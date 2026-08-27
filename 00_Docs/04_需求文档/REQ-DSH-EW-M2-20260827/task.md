@@ -116,7 +116,7 @@ T-012 rc.2 最终验证与交接
 | 命令或条件 | `npm test`; `npm run verify:m0`; `npm run verify:m1`; `node --test test/workspace-contract.test.js` |
 | 预期结果 | 基线全绿；红灯先出现；实现后 workspace 测试通过；rc.1 不再作为 M2 direct dependency。 |
 | 产物位置 | Git commit 与测试输出 |
-| 当前状态 | `pass`：基线 `npm test` 21/21、`verify:m0`、`verify:m1` 均通过；workspace 测试红灯 3/3 后绿灯 3/3；`npm install --ignore-scripts` 和 `npm ls --depth=0` 通过。 |
+| 当前状态 | `pass（执行前基线）`：T-001 修改前 `npm test` 21/21、`verify:m0`、`verify:m1` 均通过；workspace 测试红灯 3/3 后绿灯 3/3；`npm install --ignore-scripts` 和 `npm ls --depth=0` 通过。M2 依赖/`prepack` 已使旧 M0/M1 根回归语义失效，完整根回归迁移见 `B-M2-06` / T-012。 |
 
 - 失败：基线失败先定位环境/历史回归；依赖解析失败不放宽版本。
 - 回滚：revert T-001 独立提交；不改写 M0/M1 历史。
@@ -187,7 +187,7 @@ T-012 rc.2 最终验证与交接
 | 证据等级 | `host/build` |
 | 命令或条件 | `npx tsx --test packages/provider-reference/test/provider.test.ts`; `npx tsc -p packages/provider-reference/tsconfig.json --noEmit` |
 | 预期结果 | 正常/故障/超时/双实例全部通过且无越界 API。 |
-| 当前状态 | `pass`：Reference 测试红灯后 6/6 通过；TypeScript `--noEmit` 通过；文件/进程/网络/Tool 越界扫描 0。 |
+| 当前状态 | `pass`：Reference 测试红灯后 7/7 通过；TypeScript `--noEmit` 通过；非法故障模式、非 1000 ms deadline 和额外配置字段均被运行时拒绝；文件/进程/网络/Tool 越界扫描 0。 |
 
 - 回滚：revert T-003；资源清理语义无法闭合时回 Spec。
 
@@ -536,6 +536,7 @@ T-012 rc.2 最终验证与交接
 | B-M2-03 | 未验证/阻断门 | child Fiber 启动/清理失败后 Core 与兄弟 Fiber 保持 active | T-005/T-012 | Fake + 真实 Cordis 4.0.1 测试 | open |
 | B-M2-04 | 未验证 | Settings 普通卸载保留与重装恢复 | T-006/T-011 | 隔离 settings.yaml remove/reinstall 对比 | open |
 | B-M2-05 | 风险/非阻断 | UI 人工验收需要隔离 rc.2 Web 实例 | T-012 | 自动门通过后启动隔离 Web 并记录观察 | open |
+| B-M2-06 | 已知回归迁移 | T-001 的 M2 workspace/精确依赖/prepack 已与旧 M0/M1“单包、零 dependency/Remote、rc.1”断言冲突；完整根 `npm test`/`verify:m0`/pack 暂非通过证据 | T-012 | 按 Plan 任务12 重写为 M2 合法的单 row、零 Tool、Reference lifecycle、精确 pack 回归；T-007/T-008 补齐 build/prepack 脚本后复跑 | open |
 
 ## 7. SOLID 固定交接
 

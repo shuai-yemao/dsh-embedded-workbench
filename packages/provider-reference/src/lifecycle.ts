@@ -34,6 +34,8 @@ export interface ReferenceDeadline {
 export type ReferenceDisposer = () => void | Promise<void>;
 export type ReferenceResourceFactory = () => ReferenceDisposer | Promise<ReferenceDisposer>;
 
+const REFERENCE_FAILURE_MODES = new Set<ReferenceFailureMode>(["none", "start", "cleanup"]);
+
 export interface ReferenceLifecycleOptions {
     readonly failure?: ReferenceFailureMode;
     readonly cleanupTimeoutMs?: number;
@@ -76,9 +78,24 @@ function defaultResourceFactories(): readonly ReferenceResourceFactory[] {
     ];
 }
 
+export function assertReferenceFailureMode(value: unknown): ReferenceFailureMode {
+    if (!REFERENCE_FAILURE_MODES.has(value as ReferenceFailureMode)) {
+        throw new TypeError(`Invalid reference failure mode: ${String(value)}`);
+    }
+    return value as ReferenceFailureMode;
+}
+
+function assertCleanupTimeoutMs(value: number | undefined): number {
+    const timeoutMs = value ?? 1000;
+    if (!Number.isSafeInteger(timeoutMs) || timeoutMs !== 1000) {
+        throw new TypeError("Reference cleanup timeout must be exactly 1000 ms");
+    }
+    return timeoutMs;
+}
+
 export function createReferenceLifecycle(options: ReferenceLifecycleOptions = {}) {
-    const failure = options.failure ?? "none";
-    const cleanupTimeoutMs = options.cleanupTimeoutMs ?? 1000;
+    const failure = assertReferenceFailureMode(options.failure ?? "none");
+    const cleanupTimeoutMs = assertCleanupTimeoutMs(options.cleanupTimeoutMs);
     const deadline = options.deadline ?? { schedule: defaultDeadline };
     const resourceFactories = options.resourceFactories ?? defaultResourceFactories();
     const resources: ResourceRecord[] = [];
@@ -135,10 +152,17 @@ export function createReferenceLifecycle(options: ReferenceLifecycleOptions = {}
 
         let signalTimeout!: () => void;
         const timeout = new Promise<void>((resolve) => { signalTimeout = resolve; });
-        const deadlineHandle = deadline.schedule(() => {
+        const onDeadline = () => {
             cleanupTimedOut = true;
             signalTimeout();
-        }, cleanupTimeoutMs);
+        };
+        let deadlineHandle: { cancel(): void };
+        try {
+            deadlineHandle = deadline.schedule(onDeadline, cleanupTimeoutMs);
+        } catch (error) {
+            cleanupErrors.push(serializeError(error));
+            deadlineHandle = defaultDeadline(onDeadline, cleanupTimeoutMs);
+        }
         const drain = drainResources();
         drain.catch(() => undefined);
 

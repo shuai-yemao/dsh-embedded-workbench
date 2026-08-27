@@ -112,3 +112,22 @@ test("Cordis apply starts one lifecycle and returns its disposer", async () => {
     assert.equal(typeof dispose, "function");
     await dispose();
 });
+
+test("reference fixture configuration rejects unsupported modes and deadlines", async () => {
+    assert.throws(
+        () => createReferenceLifecycle({ failure: "invalid" as never }),
+        /failure mode/i,
+    );
+    assert.throws(
+        () => createReferenceLifecycle({ cleanupTimeoutMs: 500 }),
+        /1000 ms/i,
+    );
+    await assert.rejects(
+        apply({} as never, { failure: "invalid" } as never),
+        /failure mode/i,
+    );
+    await assert.rejects(
+        apply({} as never, { unexpected: true } as never),
+        /unexpected field/i,
+    );
+});
