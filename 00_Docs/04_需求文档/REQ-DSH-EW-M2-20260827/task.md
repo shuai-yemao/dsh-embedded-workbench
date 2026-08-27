@@ -63,8 +63,8 @@ T-012 rc.2 最终验证与交接
 |---:|---|---|---|---|---|---|---|---|
 | 1 | T-001 | 建立 workspace、精确工具链和基线门禁 | none | `toolchain-engineer` | `mcu-workbench:tools-build` | `mcu-workbench:tdd` | static/host | pass |
 | 2 | T-002 | 实现无框架泄漏的 Contracts | T-001 | `system-architect` | `mcu-workbench:codebase-design` | `mcu-workbench:tdd` | static/host/build | pass |
-| 3 | T-003 | 迁移 Reference Provider 私有生命周期 | T-002 | `firmware-engineer` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tdd` | host/build | ready |
-| 4 | T-004 | 实现 Catalog 与 import 前兼容检查 | T-003 | `system-architect` | `mcu-workbench:codebase-design` | `mcu-workbench:tdd` | host/build | not-run |
+| 3 | T-003 | 迁移 Reference Provider 私有生命周期 | T-002 | `firmware-engineer` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tdd` | host/build | pass |
+| 4 | T-004 | 实现 Catalog 与 import 前兼容检查 | T-003 | `system-architect` | `mcu-workbench:codebase-design` | `mcu-workbench:tdd` | host/build | ready |
 | 5 | T-005 | 实现单能力 Gate 与 Core Controller | T-004 | `firmware-engineer` | `mcu-workbench:tdd` | `mcu-workbench:codebase-design` | host | not-run |
 | 6 | T-006 | 注册 Settings 唯一事实源 | T-005 | `firmware-engineer` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tdd` | host | not-run |
 | 7 | T-007 | 实现 Typert Gateway、生成物和 Core 组合根 | T-006 | `toolchain-engineer` | `mcu-workbench:tools-build` | `mcu-workbench:tdd` | host/build | not-run |
@@ -169,7 +169,7 @@ T-012 rc.2 最终验证与交接
 | supporting_skills | `mcu-workbench:tdd`, `mcu-workbench:codebase-design` |
 | allocation_evidence | Provider 私有资源栈、生命周期和故障注入是独立实现职责。 |
 | confidence | `user-confirmed` |
-| status | `not-run` |
+| status | `pass` |
 
 #### 目标、步骤与边界
 
@@ -187,7 +187,7 @@ T-012 rc.2 最终验证与交接
 | 证据等级 | `host/build` |
 | 命令或条件 | `npx tsx --test packages/provider-reference/test/provider.test.ts`; `npx tsc -p packages/provider-reference/tsconfig.json --noEmit` |
 | 预期结果 | 正常/故障/超时/双实例全部通过且无越界 API。 |
-| 当前状态 | `not-run` |
+| 当前状态 | `pass`：Reference 测试红灯后 6/6 通过；TypeScript `--noEmit` 通过；文件/进程/网络/Tool 越界扫描 0。 |
 
 - 回滚：revert T-003；资源清理语义无法闭合时回 Spec。
 
@@ -514,7 +514,7 @@ T-012 rc.2 最终验证与交接
 |---|---|---|---|---|---|
 | T-001 | workspace 与精确 rc.2 工具链 | static/host | workspace test + M0/M1 baseline | 单入口四 workspace、版本精确 | pass |
 | T-002 | Contracts 稳定且无框架泄漏 | static/host/build | contracts test + tsc + rg | JSON-safe、兼容检查、零框架依赖 | pass |
-| T-003 | Reference 实例和资源隔离 | host/build | provider test + tsc | 故障/超时不跨实例 | not-run |
+| T-003 | Reference 实例和资源隔离 | host/build | provider test + tsc | 故障/超时不跨实例 | pass |
 | T-004 | import 前兼容 | host | catalog/resolver tests | missing/incompatible import=0 | not-run |
 | T-005 | Gate/Controller 故障隔离 | host | gate/controller tests | 最新 desired 收敛，A 不影响 B | not-run |
 | T-006 | Settings 唯一 desired 源 | host | settings test | 持久、差量、冲突不覆盖 | not-run |
