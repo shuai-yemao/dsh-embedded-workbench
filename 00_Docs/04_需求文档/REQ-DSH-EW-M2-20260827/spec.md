@@ -6,8 +6,8 @@
 > 基线提交：`e9edbd8`
 > 兼容基线：DeepSeek Harness `0.1.1-rc.2`
 > 选定方向：方案 B——单 Bundle + 多能力插件
-> Spec 状态：`awaiting-written-review`
-> 代码阶段判定：`禁止进入代码阶段`
+> Spec 状态：`approved`
+> 代码阶段判定：`允许编写 Plan；Plan 获批前禁止进入代码阶段`
 
 本 Spec 建立在 M0 最小插件注册和 M1 私有生命周期基线之上。M0/M1 文档及 rc.1
 证据保持冻结；M2 重新以当前安装的 DSH `0.1.1-rc.2` 建立兼容和运行证据，不把历史
