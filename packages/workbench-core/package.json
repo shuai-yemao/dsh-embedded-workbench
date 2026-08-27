@@ -19,6 +19,10 @@
     "./package.json": "./package.json"
   },
   "files": ["lib", "package.json"],
+  "scripts": {
+    "test": "tsx --tsconfig ../../tsconfig.base.json --test test/*.test.ts",
+    "build": "tsc -p tsconfig.json"
+  },
   "dependencies": {
     "@deepseek-ai/schemastery": "3.18.1",
     "@dsh-embedded/workbench-contracts": "0.0.0",
