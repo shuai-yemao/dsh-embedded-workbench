@@ -62,8 +62,8 @@ T-012 rc.2 最终验证与交接
 | 顺序 | task_id | 任务名称 | 前置任务 | 主 Agent | 主实现 Skill | 辅助 Skill | 验证等级 | 状态 |
 |---:|---|---|---|---|---|---|---|---|
 | 1 | T-001 | 建立 workspace、精确工具链和基线门禁 | none | `toolchain-engineer` | `mcu-workbench:tools-build` | `mcu-workbench:tdd` | static/host | pass |
-| 2 | T-002 | 实现无框架泄漏的 Contracts | T-001 | `system-architect` | `mcu-workbench:codebase-design` | `mcu-workbench:tdd` | static/host/build | ready |
-| 3 | T-003 | 迁移 Reference Provider 私有生命周期 | T-002 | `firmware-engineer` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tdd` | host/build | not-run |
+| 2 | T-002 | 实现无框架泄漏的 Contracts | T-001 | `system-architect` | `mcu-workbench:codebase-design` | `mcu-workbench:tdd` | static/host/build | pass |
+| 3 | T-003 | 迁移 Reference Provider 私有生命周期 | T-002 | `firmware-engineer` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tdd` | host/build | ready |
 | 4 | T-004 | 实现 Catalog 与 import 前兼容检查 | T-003 | `system-architect` | `mcu-workbench:codebase-design` | `mcu-workbench:tdd` | host/build | not-run |
 | 5 | T-005 | 实现单能力 Gate 与 Core Controller | T-004 | `firmware-engineer` | `mcu-workbench:tdd` | `mcu-workbench:codebase-design` | host | not-run |
 | 6 | T-006 | 注册 Settings 唯一事实源 | T-005 | `firmware-engineer` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tdd` | host | not-run |
@@ -135,7 +135,7 @@ T-012 rc.2 最终验证与交接
 | supporting_skills | `mcu-workbench:tdd` |
 | allocation_evidence | 稳定 DTO、错误码、版本契约与 JSON-safe 快照属于架构公共边界。 |
 | confidence | `confirmed` |
-| status | `not-run` |
+| status | `pass` |
 
 #### 目标、步骤与边界
 
@@ -152,7 +152,7 @@ T-012 rc.2 最终验证与交接
 | 证据等级 | `static/host/build` |
 | 命令或条件 | `npx tsx --test packages/workbench-contracts/test/contracts.test.ts`; `npx tsc -p packages/workbench-contracts/tsconfig.json --noEmit`; `rg "cordis|dsh-|react|provider-reference" packages/workbench-contracts/src` |
 | 预期结果 | 测试/类型检查通过，边界扫描零匹配。 |
-| 当前状态 | `not-run` |
+| 当前状态 | `pass`：三轮红→绿；6 个 Contracts 测试、TypeScript 6 `--noEmit` 通过；框架/Provider 依赖扫描 0。 |
 
 - 回滚：revert T-002；若固定接口需变化，停止并回 Spec。
 
@@ -513,7 +513,7 @@ T-012 rc.2 最终验证与交接
 | task_id | 验收项 | 证据等级 | 命令/条件 | 预期结果 | 状态 |
 |---|---|---|---|---|---|
 | T-001 | workspace 与精确 rc.2 工具链 | static/host | workspace test + M0/M1 baseline | 单入口四 workspace、版本精确 | pass |
-| T-002 | Contracts 稳定且无框架泄漏 | static/host/build | contracts test + tsc + rg | JSON-safe、兼容检查、零框架依赖 | not-run |
+| T-002 | Contracts 稳定且无框架泄漏 | static/host/build | contracts test + tsc + rg | JSON-safe、兼容检查、零框架依赖 | pass |
 | T-003 | Reference 实例和资源隔离 | host/build | provider test + tsc | 故障/超时不跨实例 | not-run |
 | T-004 | import 前兼容 | host | catalog/resolver tests | missing/incompatible import=0 | not-run |
 | T-005 | Gate/Controller 故障隔离 | host | gate/controller tests | 最新 desired 收敛，A 不影响 B | not-run |
