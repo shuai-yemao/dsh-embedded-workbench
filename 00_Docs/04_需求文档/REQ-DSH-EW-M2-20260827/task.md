@@ -65,8 +65,8 @@ T-012 rc.2 最终验证与交接
 | 2 | T-002 | 实现无框架泄漏的 Contracts | T-001 | `system-architect` | `mcu-workbench:codebase-design` | `mcu-workbench:tdd` | static/host/build | pass |
 | 3 | T-003 | 迁移 Reference Provider 私有生命周期 | T-002 | `firmware-engineer` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tdd` | host/build | pass |
 | 4 | T-004 | 实现 Catalog 与 import 前兼容检查 | T-003 | `system-architect` | `mcu-workbench:codebase-design` | `mcu-workbench:tdd` | host/build | pass |
-| 5 | T-005 | 实现单能力 Gate 与 Core Controller | T-004 | `firmware-engineer` | `mcu-workbench:tdd` | `mcu-workbench:codebase-design` | host | ready |
-| 6 | T-006 | 注册 Settings 唯一事实源 | T-005 | `firmware-engineer` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tdd` | host | not-run |
+| 5 | T-005 | 实现单能力 Gate 与 Core Controller | T-004 | `firmware-engineer` | `mcu-workbench:tdd` | `mcu-workbench:codebase-design` | host | pass |
+| 6 | T-006 | 注册 Settings 唯一事实源 | T-005 | `firmware-engineer` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tdd` | host | ready |
 | 7 | T-007 | 实现 Typert Gateway、生成物和 Core 组合根 | T-006 | `toolchain-engineer` | `mcu-workbench:tools-build` | `mcu-workbench:tdd` | host/build | not-run |
 | 8 | T-008 | 将根包收敛为 Bundle 装配层 | T-007 | `system-architect` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tools-build` | static/host/build | not-run |
 | 9 | T-009 | 实现 UI Controller 状态同步 | T-008 | `firmware-engineer` | `mcu-workbench:tdd` | `mcu-workbench:frontend-excellence` | host | not-run |
@@ -238,7 +238,7 @@ T-012 rc.2 最终验证与交接
 | supporting_skills | `mcu-workbench:codebase-design` |
 | allocation_evidence | 同能力串行、异能力独立和 child Fiber 所有权需要并发状态机测试先行。 |
 | confidence | `user-confirmed` |
-| status | `not-run` |
+| status | `pass` |
 
 #### 目标、步骤与边界
 
@@ -256,7 +256,7 @@ T-012 rc.2 最终验证与交接
 | 证据等级 | `host` |
 | 命令或条件 | `npx tsx --test packages/workbench-core/test/operation-gate.test.ts packages/workbench-core/test/controller.test.ts` |
 | 预期结果 | 快速切换资源成对；A 失败/清理失败不影响 B/Core。 |
-| 当前状态 | `not-run` |
+| 当前状态 | `pass`：13 个 Core 主机测试、真实 Cordis 4.0.1 Context/Fiber 测试与 TypeScript `--noEmit` 通过；同能力 Promise 身份一致、异能力无全局锁、故障与 cleanup 残留均不跨能力传播。 |
 
 - 回滚：revert T-005；若 Cordis child failure 强制回滚 Core，停止并回 Spec。
 
@@ -516,7 +516,7 @@ T-012 rc.2 最终验证与交接
 | T-002 | Contracts 稳定且无框架泄漏 | static/host/build | contracts test + tsc + rg | JSON-safe、兼容检查、零框架依赖 | pass |
 | T-003 | Reference 实例和资源隔离 | host/build | provider test + tsc | 故障/超时不跨实例 | pass |
 | T-004 | import 前兼容 | host | catalog/resolver tests | missing/incompatible import=0 | pass |
-| T-005 | Gate/Controller 故障隔离 | host | gate/controller tests | 最新 desired 收敛，A 不影响 B | not-run |
+| T-005 | Gate/Controller 故障隔离 | host | gate/controller tests | 最新 desired 收敛，A 不影响 B | pass |
 | T-006 | Settings 唯一 desired 源 | host | settings test | 持久、差量、冲突不覆盖 | not-run |
 | T-007 | Typert 三方法和 Core 清理 | host/build | gateway + generator | strict `list/retry/reconcile` | not-run |
 | T-008 | 单 Bundle 装配 | static/host/build | root tests + build | 单 row、无私有反向依赖 | not-run |

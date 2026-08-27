@@ -2,6 +2,8 @@ import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
 
+import type { Plugin } from "@deepseek-ai/cordis";
+
 import {
     assertProviderManifest,
     freezeJsonSnapshot,
@@ -22,7 +24,7 @@ export interface ProviderPackageManifest {
 
 export interface ProviderModule {
     readonly manifest: ProviderManifest;
-    readonly apply?: unknown;
+    readonly plugin: Plugin;
 }
 
 export interface ProviderResolution {
@@ -92,9 +94,16 @@ function asProviderModule(value: unknown): ProviderModule | undefined {
     const module = value as Record<string, unknown>;
     if (!("manifest" in module)) return undefined;
     try {
+        const plugin = module.default ?? (module.apply === undefined
+            ? undefined
+            : Object.freeze({
+                ...(module.inject === undefined ? {} : { inject: module.inject }),
+                apply: module.apply,
+            }));
+        if (plugin === undefined) return undefined;
         return {
             manifest: assertProviderManifest(module.manifest),
-            ...(module.apply === undefined ? {} : { apply: module.apply }),
+            plugin: plugin as Plugin,
         };
     } catch {
         return undefined;

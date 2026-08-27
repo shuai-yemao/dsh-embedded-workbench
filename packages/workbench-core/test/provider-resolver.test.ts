@@ -75,7 +75,10 @@ test("matching static and module manifests become available after one import", a
     let imports = 0;
     const result = await resolveProvider(descriptor, {
         resolveManifest: async () => packageManifest(),
-        importModule: async () => { imports += 1; return { manifest: providerManifest, apply: () => undefined }; },
+        importModule: async () => {
+            imports += 1;
+            return { manifest: providerManifest, apply: () => undefined };
+        },
     });
 
     assert.equal(result.availability, "AVAILABLE");
