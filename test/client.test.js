@@ -18,7 +18,7 @@ test("generated root Client composes the Remote mount and embedded Settings sect
 		if (moduleId === "react/jsx-runtime") return { jsx: (type, props) => ({ type, props }), jsxs: (type, props) => ({ type, props }) };
 		throw new Error(`unexpected external module: ${moduleId}`);
 	});
-	assert.deepEqual(Array.from(client.inject), ["slots", "settingsScope", "remote"]);
+	assert.deepEqual(Array.from(client.inject), ["remote"]);
 	assert.equal(typeof client.apply, "function");
 	const operations = [];
 	const context = {
@@ -39,6 +39,7 @@ test("generated root Client composes the Remote mount and embedded Settings sect
 			}),
 		},
 		on: () => () => {},
+		inject: (_deps, callback) => { operations.push("context.inject"); return callback(context); },
 		effect: async callback => { operations.push("effect"); await callback(); },
 		slots: {
 			inject: (_name, callback) => { operations.push("slots.inject"); return callback(); },
@@ -46,7 +47,7 @@ test("generated root Client composes the Remote mount and embedded Settings sect
 		},
 	};
 	await client.apply(context);
-	assert.deepEqual(operations, ["remote.mount", "effect", "slots.inject", "slots.register"]);
+	assert.deepEqual(operations, ["remote.mount", "context.inject", "effect", "slots.inject", "slots.register"]);
 	assert.equal("WebSocket" in window, false);
 	assert.equal("addEventListener" in window, false);
 });

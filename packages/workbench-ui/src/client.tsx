@@ -103,6 +103,7 @@ export function WorkbenchSettingsSection({ controller, confirmReset = () => glob
 interface WorkbenchClientContext {
     readonly settingsScope: { bind<T>(spec: { readonly namespace: string }): WorkbenchSettingsScope };
     readonly remote: { readonly workbenchCapabilities: WorkbenchCapabilitiesRemote };
+    inject(deps: readonly string[], callback: (context: WorkbenchClientContext) => void): unknown;
     on(event: "connection/reset", listener: () => void): () => void;
     effect(callback: () => (() => Promise<void>) | Promise<() => Promise<void>>, label: string): unknown;
     readonly slots: {
