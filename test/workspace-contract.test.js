@@ -68,4 +68,5 @@ test("workspace dependency direction keeps providers and UI isolated", async () 
     assert.equal(ui.dependencies[provider.name], undefined);
     assert.equal(provider.dependencies[core.name], undefined);
     assert.equal(provider.dependencies[ui.name], undefined);
+    assert.equal(provider.exports["."].default, "./lib/index.js");
 });
