@@ -11,7 +11,7 @@ export async function apply(context) {
 	let coreFiber;
 	try {
 		coreFiber = context.plugin(core, {
-			providers: PROVIDERS,
+			descriptors: PROVIDERS,
 			packageBaseUrl: import.meta.url
 		});
 		await coreFiber.await();

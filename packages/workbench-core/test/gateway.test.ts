@@ -75,6 +75,20 @@ test("Gateway validates the capability before retry or reconcile and returns fro
     assert.deepEqual(calls, ["list", "snapshot:fixture.missing", "snapshot:fixture.alpha", "reconcile:fixture.alpha"]);
 });
 
+test("Gateway remains callable through Cordis's Service Proxy", async () => {
+    const context = new Context();
+    const controller: CapabilityGatewayController = {
+        snapshot: () => capability,
+        snapshotAll: () => ({ health: "READY", capabilities: [capability] }),
+        retry: async () => capability,
+        reconcile: async () => capability,
+    };
+    new WorkbenchCapabilitiesGateway(context, controller);
+    const service = (context as unknown as { readonly workbenchCapabilities: WorkbenchCapabilitiesGateway }).workbenchCapabilities;
+
+    assert.equal((await service.list()).health, "READY");
+});
+
 test("Core owns the Settings observer and disposes the Reference Provider independently", async () => {
     const context = new Context();
     let stoppedObserving = false;

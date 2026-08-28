@@ -22,8 +22,9 @@ test("Host registers the generated Typert contribution before one Core Fiber and
 			operations.push("core.plugin");
 			assert.equal(typeof plugin.apply, "function");
 			assert.equal(plugin.inject.includes("settings"), true);
-			assert.equal(config.providers.length, 1);
-			assert.equal(config.providers[0].capability_id, "reference.lifecycle");
+			assert.equal(config.descriptors.length, 1);
+			assert.equal(config.descriptors[0].capability_id, "reference.lifecycle");
+			assert.equal(config.providers, undefined);
 			assert.equal(config.packageBaseUrl, new URL("../src/index.js", import.meta.url).href);
 			return coreFiber;
 		}
