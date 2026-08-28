@@ -30,6 +30,7 @@ await buildModuleLoaderClient({
 	entryPoint: resolve(projectRoot, "src", "client-entry.js"),
 	outputPath: resolve(projectRoot, "lib", "client.js"),
 	packageId: "@dsh-embedded/dsh-embedded-workbench",
+	external: ["react", "react/jsx-runtime"],
 });
 
 await buildModuleLoaderClient({
