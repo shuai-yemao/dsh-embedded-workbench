@@ -859,17 +859,17 @@ git commit -m "feat: synchronize workbench capability settings"
 - 修改：`scripts/build-client.mjs`
 - 修改：`test/client.test.js`
 
-- [ ] **步骤 1：编写组件失败测试**
+- [x] **步骤 1：编写组件失败测试**
 
 断言 section id 仍为 `dsh-embedded-workbench`；每项显示 desired、availability、phase、apply mode；不可用错误在 rerender 后持续存在；只读 Settings 禁用开关；`RESTART_REQUIRED` 明示“需要重启”；retry 只携带当前 capability ID；reset 必须先调用确认函数。
 
-- [ ] **步骤 2：运行测试确认失败**
+- [x] **步骤 2：运行测试确认失败**
 
 运行：`npx tsx --test packages/workbench-ui/test/client.test.tsx`
 
 预期：FAIL，Settings UI 未实现。
 
-- [ ] **步骤 3：实现 Client plugin 和视图**
+- [x] **步骤 3：实现 Client plugin 和视图**
 
 Client inject 固定为：
 
@@ -892,11 +892,11 @@ const scope = ctx.settingsScope.bind({
 
 注册 `ctx.on("connection/reset", refresh)`；Settings section 使用原 id/label/order。错误卡必须显示 `capability_id`、`stage`、`message`、期望/实际版本和 `suggested_action`。LIVE 且可恢复时按钮立即 reconcile；清理失败和 restart required 时禁用原地 retry。
 
-- [ ] **步骤 4：构建 UI 独立 ModuleLoader 包**
+- [x] **步骤 4：构建 UI 独立 ModuleLoader 包**
 
 esbuild 把 `packages/workbench-ui/src/client.tsx` 构建到 `packages/workbench-ui/lib/client.js`，ModuleLoader id 为 `@dsh-embedded/workbench-ui`；仅 externalize `react` 与 `react/jsx-runtime`，Contracts 代码内联，禁止依赖 Core 私有模块。
 
-- [ ] **步骤 5：验证并提交**
+- [x] **步骤 5：验证并提交**
 
 ```powershell
 npm run build

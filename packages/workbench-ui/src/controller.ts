@@ -46,6 +46,7 @@ export interface WorkbenchUiState {
     readonly snapshot: WorkbenchSnapshot | null;
     readonly loading: boolean;
     readonly error: WorkbenchUiError | null;
+    readonly writable: boolean;
 }
 
 function defaultClock(): WorkbenchUiClock {
@@ -55,8 +56,8 @@ function defaultClock(): WorkbenchUiClock {
     };
 }
 
-function state(snapshot: WorkbenchSnapshot | null, loading: boolean, error: WorkbenchUiError | null): WorkbenchUiState {
-    return Object.freeze({ snapshot, loading, error });
+function state(snapshot: WorkbenchSnapshot | null, loading: boolean, error: WorkbenchUiError | null, writable: boolean): WorkbenchUiState {
+    return Object.freeze({ snapshot, loading, error, writable });
 }
 
 /** Client-only synchronizer: one latest snapshot, bounded transient polling, and no UI-side history. */
@@ -68,7 +69,7 @@ export class WorkbenchUiController {
     readonly #listeners = new Set<() => void>();
     readonly #pending = new Set<Promise<void>>();
     #refreshTail: Promise<void> = Promise.resolve();
-    #state: WorkbenchUiState = state(null, false, null);
+    #state: WorkbenchUiState = state(null, false, null, false);
     #timer: unknown;
     #pollCount = 0;
     #disposeScope: (() => void) | undefined;
@@ -211,7 +212,7 @@ export class WorkbenchUiController {
 
     #replace(snapshot: WorkbenchSnapshot | null, loading: boolean, error: WorkbenchUiError | null): void {
         if (this.#disposed) return;
-        this.#state = state(snapshot, loading, error);
+        this.#state = state(snapshot, loading, error, this.#scope.getSnapshot().writable);
         for (const listener of this.#listeners) listener();
     }
 

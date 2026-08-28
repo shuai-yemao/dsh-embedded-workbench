@@ -70,7 +70,7 @@ T-012 rc.2 最终验证与交接
 | 7 | T-007 | 实现 Typert Gateway、生成物和 Core 组合根 | T-006 | `toolchain-engineer` | `mcu-workbench:tools-build` | `mcu-workbench:tdd` | host/build | pass |
 | 8 | T-008 | 将根包收敛为 Bundle 装配层 | T-007 | `system-architect` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tools-build` | static/host/build | pass |
 | 9 | T-009 | 实现 UI Controller 状态同步 | T-008 | `firmware-engineer` | `mcu-workbench:tdd` | `mcu-workbench:frontend-excellence` | host | pass |
-| 10 | T-010 | 实现 Settings UI 与持续错误提示 | T-009 | `firmware-engineer` | `mcu-workbench:frontend-excellence` | `mcu-workbench:tdd` | host/build | not-run |
+| 10 | T-010 | 实现 Settings UI 与持续错误提示 | T-009 | `firmware-engineer` | `mcu-workbench:frontend-excellence` | `mcu-workbench:tdd` | host/build | pass |
 | 11 | T-011 | 执行一次安装分发阻断门 | T-010 | `verification-engineer` | `mcu-workbench:tools-verification` | `mcu-workbench:tools-build` | static/build/runtime | not-run |
 | 12 | T-012 | 完成 rc.2 隔离、回归和最终交接 | T-011 | `verification-engineer` | `mcu-workbench:tools-verification` | `mcu-workbench:workflow-final-review` | static/host/build/runtime/UI | not-run |
 
@@ -411,7 +411,7 @@ T-012 rc.2 最终验证与交接
 | supporting_skills | `mcu-workbench:tdd` |
 | allocation_evidence | Settings section、能力卡片、错误和 restart required 是独立 Client 视图职责。 |
 | confidence | `user-confirmed` |
-| status | `not-run` |
+| status | `pass` |
 
 #### 目标、步骤与边界
 
@@ -429,7 +429,7 @@ T-012 rc.2 最终验证与交接
 | 证据等级 | `host/build` |
 | 命令或条件 | `npm run build`; `npx tsx --test packages/workbench-ui/test/controller.test.ts packages/workbench-ui/test/client.test.tsx`; `node --test test/client.test.js` |
 | 预期结果 | UI 契约测试和 ModuleLoader 构建通过。 |
-| 当前状态 | `not-run` |
+| 当前状态 | `pass`：5 个 UI/Controller 主机测试、根 `npm run build` 和生成 UI ModuleLoader VM 测试通过。Settings section 显示 desired、availability、phase、apply mode 与持续“能力不可用”错误；只读 scope 禁用开关，`RESTART_REQUIRED` 显示“需要重启”，仅 LIVE+recoverable 暴露按 capability ID 的 retry。 |
 
 - 回滚：revert T-010；不以 HTTP 200 代替最终 UI 人工验收。
 
@@ -521,7 +521,7 @@ T-012 rc.2 最终验证与交接
 | T-007 | Typert 三方法和 Core 清理 | host/build | Gateway 3 tests + `tsc -b` + rc.2 overlay generator + Host Gateway unknown-field probe | 严格 artifact 生成；仅 `list/reconcile/retry`，未知字段 `arguments-invalid`，Core 释放 Settings observer | pass |
 | T-008 | 单 Bundle 装配 | static/host/build | 4 root tests + `npm run build` + ModuleLoader VM probe | 单 row；声明式 Provider；Host/Core 和 Client/Remote 均使用 rc.2 seam | pass |
 | T-009 | UI 状态同步资源有界 | host | Controller 4 fake-clock tests + UI `tsc --noEmit` | 500 ms×20 上限、写入冲突保留 Host、timer/订阅对称 | pass |
-| T-010 | Settings UI 持续错误/重启提示 | host/build | UI tests + build | 每能力独立控制与错误 | not-run |
+| T-010 | Settings UI 持续错误/重启提示 | host/build | UI/Controller 5 tests + `npm run build` + UI ModuleLoader VM test | 持续不可用、只读禁用、restart 提示、确认 reset | pass |
 | T-011 | 一次安装和精确卸载 | runtime | `verify:m2:runtime` | Optional 缺失可降级、设置保留 | not-run |
 | T-012 | 全量回归与人工 UI | static/host/build/runtime/UI | 全门禁 + UI checklist | V-M2-01..20 闭合 | not-run |
 
