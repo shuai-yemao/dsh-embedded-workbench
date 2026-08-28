@@ -1,17 +1,21 @@
 # DSH Embedded Workbench M2 Spec
 
-> 版本：v0.1
+> 版本：v0.2
 > request_id：`REQ-DSH-EW-M2-20260827`
 > 项目：`D:\zhuomian\dsh-embedded-workbench`
 > 基线提交：`e9edbd8`
 > 兼容基线：DeepSeek Harness `0.1.1-rc.2`
 > 选定方向：方案 B——单 Bundle + 多能力插件
 > Spec 状态：`approved`
-> 代码阶段判定：`允许编写 Plan；Plan 获批前禁止进入代码阶段`
+> 代码阶段判定：`允许按已批准 Plan 实施；接口事实变化须回写本 Spec`
 
 本 Spec 建立在 M0 最小插件注册和 M1 私有生命周期基线之上。M0/M1 文档及 rc.1
 证据保持冻结；M2 重新以当前安装的 DSH `0.1.1-rc.2` 建立兼容和运行证据，不把历史
 rc.1 结果外推为 M2 兼容结论。
+
+> v0.2 更新（2026-08-28）：经真实 rc.2 `settingsNamespace()` 校验，用户确认将 Settings
+> namespace 锁定为其可接受的 `dsh-embedded-workbench`；此为命名修正，不改变单 Bundle、多
+> 能力隔离、Settings 唯一事实源或验收范围。
 
 ## 0. 目标、范围与非目标
 
@@ -68,6 +72,7 @@ rc.1 结果外推为 M2 兼容结论。
 | Q-M2-11 | M2 只用 Reference Provider 闭合架构，不提前实现真实能力 | `user-confirmed` |
 | Q-M2-12 | M2 不循环自动重试，只提供手动重试和依赖变化后的单次 reconcile | `user-confirmed` |
 | Q-M2-13 | 普通卸载保留 Workbench 设置；显式“重置工作台设置”才清除 | `user-confirmed` |
+| Q-M2-14 | Settings namespace 采用真实 rc.2 接受的 `dsh-embedded-workbench`，替代被拒绝的 camelCase 候选；不得通过私有存储或通信总线规避 | `user-confirmed` |
 
 ## 2. 当前工程事实与真实接口
 
@@ -226,13 +231,13 @@ occurred_at
 
 ### 6.1 Settings 事实源
 
-Host 注册 Settings namespace `dshEmbedded.workbench`，M2 只允许以下持久字段：
+Host 注册 Settings namespace `dsh-embedded-workbench`，M2 只允许以下持久字段：
 
 ```text
 capabilities.<capability_id>.enabled: boolean
 ```
 
-Client 使用 `ctx.settingsScope.bind({ namespace: "dshEmbedded.workbench" })` 读取和写入；所有写入
+Client 使用 `ctx.settingsScope.bind({ namespace: "dsh-embedded-workbench" })` 读取和写入；所有写入
 携带最新 revision，发生冲突时不得覆盖 Host 较新值。Settings 为只读时，UI 禁用开关并显示
 只读原因。
 
@@ -328,7 +333,7 @@ M2 不进行循环自动重试。允许的触发只有：
 
 ## 9. 配置和卸载数据生命周期
 
-`dshEmbedded.workbench` Settings namespace 由 Workbench 拥有，Host Settings Provider 负责实际
+`dsh-embedded-workbench` Settings namespace 由 Workbench 拥有，Host Settings Provider 负责实际
 文件持久化。UI 只借用投影，不拥有文件。
 
 普通卸载：
@@ -336,7 +341,7 @@ M2 不进行循环自动重试。允许的触发只有：
 - 停止全部 Provider Fiber；
 - 注销 Core、Remote、Client slot 和 Settings UI；
 - 移除 Bundle/package/row；
-- 保留 `dshEmbedded.workbench` 用户设置，供重新安装恢复；
+- 保留 `dsh-embedded-workbench` 用户设置，供重新安装恢复；
 - 不保留 timer、Promise、进程、端口、资源句柄或运行态错误对象。
 
 显式“重置工作台设置”：

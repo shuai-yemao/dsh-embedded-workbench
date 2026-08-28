@@ -13,7 +13,8 @@
 ## 0. 执行基线、范围门和停止条件
 
 - 文档基线提交：`d58c156`；正式执行基线是本 Plan 提交后的 `HEAD`。
-- 正式输入：`00_Docs/04_需求文档/REQ-DSH-EW-M2-20260827/spec.md` v0.1 approved。
+- 正式输入：`00_Docs/04_需求文档/REQ-DSH-EW-M2-20260827/spec.md` v0.2 approved。
+- Settings namespace 使用经 rc.2 `settingsNamespace()` 实测接受、并获用户确认的 `dsh-embedded-workbench`；不得用私有存储或总线规避该 API。
 - 当前 M1 产品代码必须先通过：`npm test`、`npm run verify:m0`、`npm run verify:m1`。
 - M2 只实现无硬件副作用的 Reference Provider；不得访问工程文件、进程、网络、串口、USB、调试器或 MCU。
 - 不注册 Tool，不修改官方 DSH 包，不写当前用户 Profile，不关闭 M1 顶层 Loader reload 延期项。
@@ -64,7 +65,7 @@
 - 创建：`packages/workbench-core/src/provider-resolver.ts`——先读 package manifest 和兼容信息，再导入 Provider 代码。
 - 创建：`packages/workbench-core/src/operation-gate.ts`——同能力串行、异能力独立、最新 desired 收敛。
 - 创建：`packages/workbench-core/src/controller.ts`——独立 child Fiber 启停、失败隔离和清理。
-- 创建：`packages/workbench-core/src/settings.ts`——`dshEmbedded.workbench` schema、scope 和变更协调。
+- 创建：`packages/workbench-core/src/settings.ts`——`dsh-embedded-workbench` schema、scope 和变更协调。
 - 创建：`packages/workbench-core/src/gateway.ts`——`list/retry/reconcile` Typert Remote。
 - 创建：`packages/workbench-core/src/index.ts`——Core 组合根与逆序释放。
 - 创建：`packages/workbench-core/test/*.test.ts`——Catalog、Resolver、Gate、Controller、Settings、Gateway 测试。
@@ -94,7 +95,7 @@
 实现期间名称不得漂移：
 
 ```ts
-export const WORKBENCH_SETTINGS_NAMESPACE = "dshEmbedded.workbench" as const;
+export const WORKBENCH_SETTINGS_NAMESPACE = "dsh-embedded-workbench" as const;
 export const WORKBENCH_REMOTE_NAMESPACE = "workbenchCapabilities" as const;
 export const WORKBENCH_CONTRACT_VERSION = "1.0.0" as const;
 
@@ -576,7 +577,7 @@ git commit -m "feat: supervise providers with isolated operation gates"
 
 - [ ] **步骤 1：编写 Settings 失败测试**
 
-Fake 必须复现 rc.2 `register().get/watch/update/replace` 契约。断言默认值来自描述符、一次变更只协调变化 ID、revision 冲突不覆盖新值、普通 dispose 注销 runtime scope 但不清持久文档。
+Fake 必须复现已验证的 rc.2 scope `get/watch/update/replace` 契约。断言默认值来自描述符、一次变更只协调变化 ID、单能力写入失败不阻断其他 ID、普通 dispose 注销 watcher 但不清持久文档。Client 侧 revision 冲突处理留给任务 9，必须使用届时验证的 `settingsScope` 写入接口。
 
 - [ ] **步骤 2：运行测试确认失败**
 
@@ -924,7 +925,7 @@ registry=https://registry.npmjs.org/
 
 - [ ] **步骤 5：验证 remove 与设置保留**
 
-在隔离的 `$isolatedDshHome/settings.yaml` 中写入 namespace `dshEmbedded.workbench`，其 `capabilities` map 使用完整键 `"reference.lifecycle"` 且 `enabled: false`，执行：
+在隔离的 `$isolatedDshHome/settings.yaml` 中写入 namespace `dsh-embedded-workbench`，其 `capabilities` map 使用完整键 `"reference.lifecycle"` 且 `enabled: false`，执行：
 
 ```powershell
 & $nodeExe $dshBin plugin --profile m2-isolated remove `

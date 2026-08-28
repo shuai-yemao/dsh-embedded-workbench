@@ -8,8 +8,8 @@
 | 字段 | 内容 |
 |---|---|
 | request_id | `REQ-DSH-EW-M2-20260827` |
-| 任务清单版本 | `v0.1` |
-| 状态 | `阻塞` |
+| 任务清单版本 | `v0.2` |
+| 状态 | `执行中` |
 | 项目路径与提交 | `D:\zhuomian\dsh-embedded-workbench @ main / 04f0a4403e86a6583b6ef2dd649cb81fa12e48dc` |
 | 输入 spec.md | `D:\zhuomian\dsh-embedded-workbench\00_Docs\04_需求文档\REQ-DSH-EW-M2-20260827\spec.md` |
 | 输入 plan.md | `D:\zhuomian\dsh-embedded-workbench\00_Docs\04_需求文档\REQ-DSH-EW-M2-20260827\plan.md` |
@@ -66,7 +66,7 @@ T-012 rc.2 最终验证与交接
 | 3 | T-003 | 迁移 Reference Provider 私有生命周期 | T-002 | `firmware-engineer` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tdd` | host/build | pass |
 | 4 | T-004 | 实现 Catalog 与 import 前兼容检查 | T-003 | `system-architect` | `mcu-workbench:codebase-design` | `mcu-workbench:tdd` | host/build | pass |
 | 5 | T-005 | 实现单能力 Gate 与 Core Controller | T-004 | `firmware-engineer` | `mcu-workbench:tdd` | `mcu-workbench:codebase-design` | host | pass |
-| 6 | T-006 | 注册 Settings 唯一事实源 | T-005 | `firmware-engineer` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tdd` | host | blocked |
+| 6 | T-006 | 注册 Settings 唯一事实源 | T-005 | `firmware-engineer` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tdd` | host | ready |
 | 7 | T-007 | 实现 Typert Gateway、生成物和 Core 组合根 | T-006 | `toolchain-engineer` | `mcu-workbench:tools-build` | `mcu-workbench:tdd` | host/build | not-run |
 | 8 | T-008 | 将根包收敛为 Bundle 装配层 | T-007 | `system-architect` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tools-build` | static/host/build | not-run |
 | 9 | T-009 | 实现 UI Controller 状态同步 | T-008 | `firmware-engineer` | `mcu-workbench:tdd` | `mcu-workbench:frontend-excellence` | host | not-run |
@@ -273,12 +273,12 @@ T-012 rc.2 最终验证与交接
 | supporting_skills | `mcu-workbench:tdd` |
 | allocation_evidence | Settings owner 负责唯一 desired 事实源及差量协调，不拥有 Provider 生命周期。 |
 | confidence | `confirmed` |
-| status | `blocked` |
+| status | `ready` |
 
 #### 目标、步骤与边界
 
-- Fake rc.2 `register().get/watch/update/replace`，先测试默认值、单 ID 差量、revision 冲突、dispose 保留文档。
-- 注册唯一 namespace `dshEmbedded.workbench`；只保存 `capabilities[id].enabled`。
+- Fake 已验证的 rc.2 scope `get/watch/update/replace`，先测试默认值、单 ID 差量、单能力写入失败隔离、dispose 保留文档；Client revision 冲突留至 T-009 并以真实接口为准。
+- 注册唯一 namespace `dsh-embedded-workbench`；只保存 `capabilities[id].enabled`。
 - watcher 仅 reconcile 变化 ID；错误落到该能力 `settings` 阶段，不停止其他能力。
 - 普通卸载只释放 watcher/runtime scope，不清持久设置；显式 reset 才清 Workbench namespace。
 - SOLID：SRP=Settings 只持 desired；ISP=仅暴露必要 schema；Core 实际状态不得反写覆盖 desired。
@@ -289,8 +289,8 @@ T-012 rc.2 最终验证与交接
 |---|---|
 | 证据等级 | `host` |
 | 命令或条件 | `npx tsx --test packages/workbench-core/test/settings.test.ts` |
-| 预期结果 | 持久化、冲突和差量 reconcile 通过，其他 namespace 不受影响。 |
-| 当前状态 | `blocked`：已批准固定 namespace `dshEmbedded.workbench` 被 rc.2 `settingsNamespace()` 拒绝；最小复现返回 `TypeError: settings namespace "dshEmbedded.workbench" must match /^[a-z][a-z0-9-]*$/`。Plan §0 停止条件 2 命中，未创建 Settings owner 或替代存储。 |
+| 预期结果 | 持久化、单能力错误隔离和差量 reconcile 通过，其他 namespace 不受影响。 |
+| 当前状态 | `ready`：2026-08-28 已由用户确认采用 `dsh-embedded-workbench`；真实 rc.2 `settingsNamespace()` 已接受该值。未创建替代存储或通信总线。 |
 
 - 回滚：revert T-006；真实 Settings 签名不符则停止并回 Spec。
 
@@ -517,7 +517,7 @@ T-012 rc.2 最终验证与交接
 | T-003 | Reference 实例和资源隔离 | host/build | provider test + tsc | 故障/超时不跨实例 | pass |
 | T-004 | import 前兼容 | host | catalog/resolver tests | missing/incompatible import=0 | pass |
 | T-005 | Gate/Controller 故障隔离 | host | gate/controller tests | 最新 desired 收敛，A 不影响 B | pass |
-| T-006 | Settings 唯一 desired 源 | host | `settingsNamespace("dshEmbedded.workbench")` 最小复现 | 被 rc.2 schema 拒绝，等待 Spec v0.2 决策 | blocked |
+| T-006 | Settings 唯一 desired 源 | host | `settingsNamespace("dsh-embedded-workbench")` 最小复现 | rc.2 已接受，准备实现 owner/watch 差量协调 | ready |
 | T-007 | Typert 三方法和 Core 清理 | host/build | gateway + generator | strict `list/retry/reconcile` | not-run |
 | T-008 | 单 Bundle 装配 | static/host/build | root tests + build | 单 row、无私有反向依赖 | not-run |
 | T-009 | UI 状态同步资源有界 | host | controller fake-clock tests | timer/订阅对称 | not-run |
@@ -537,7 +537,7 @@ T-012 rc.2 最终验证与交接
 | B-M2-04 | 未验证 | Settings 普通卸载保留与重装恢复 | T-006/T-011 | 隔离 settings.yaml remove/reinstall 对比 | open |
 | B-M2-05 | 风险/非阻断 | UI 人工验收需要隔离 rc.2 Web 实例 | T-012 | 自动门通过后启动隔离 Web 并记录观察 | open |
 | B-M2-06 | 已知回归迁移 | T-001 的 M2 workspace/精确依赖/prepack 已与旧 M0/M1“单包、零 dependency/Remote、rc.1”断言冲突；完整根 `npm test`/`verify:m0`/pack 暂非通过证据 | T-012 | 按 Plan 任务12 重写为 M2 合法的单 row、零 Tool、Reference lifecycle、精确 pack 回归；T-007/T-008 补齐 build/prepack 脚本后复跑 | open |
-| B-M2-07 | 阻塞/真实接口冲突 | Spec/Plan 固定 `WORKBENCH_SETTINGS_NAMESPACE="dshEmbedded.workbench"`，但安装的 rc.2 `settingsNamespace()` 仅接受 `/^[a-z][a-z0-9-]*$/`；真实调用已抛 `TypeError` | T-006..T-012 | 由用户确认 Spec v0.2：改为合法 namespace（候选 `dsh-embedded-workbench`）或明确采用另一个已证实公开 Settings seam；不得伪造 namespace、修改官方包或新建存储/总线 | open/blocking |
+| B-M2-07 | 已解决/用户确认 | 原 camelCase namespace 被 rc.2 `settingsNamespace()` 拒绝；用户于 2026-08-28 确认采用已实测合法的 `dsh-embedded-workbench` | T-006..T-012 | Spec/Plan/task v0.2 已同步；T-006 仅使用真实 Settings seam 实施 | closed |
 
 ## 7. SOLID 固定交接
 
