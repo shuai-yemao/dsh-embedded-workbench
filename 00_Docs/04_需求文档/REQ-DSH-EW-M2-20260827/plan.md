@@ -722,17 +722,17 @@ git commit -m "feat: expose typed capability remote gateway"
 - 修改：`test/backend.test.js`
 - 修改：`test/package-contract.test.js`
 
-- [ ] **步骤 1：先改测试表达 M2 Bundle 契约**
+- [x] **步骤 1：先改测试表达 M2 Bundle 契约**
 
 断言根包：只有一个 Loader row；required 内部包在 `dependencies`；Reference 只在 `optionalDependencies`；`src/providers.js` 不 import Provider；Host 只注册生成 Typert contribution 并创建一个 Core Fiber；Client 只挂载生成 Remote descriptor。
 
-- [ ] **步骤 2：运行测试确认失败**
+- [x] **步骤 2：运行测试确认失败**
 
 运行：`node --test test/backend.test.js test/package-contract.test.js`
 
 预期：FAIL，仍观察到 M1 lifecycle 和 M0 Client section。
 
-- [ ] **步骤 3：实现唯一 Provider 描述符**
+- [x] **步骤 3：实现唯一 Provider 描述符**
 
 ```js
 export const PROVIDERS = Object.freeze([Object.freeze({
@@ -746,11 +746,11 @@ export const PROVIDERS = Object.freeze([Object.freeze({
 })]);
 ```
 
-- [ ] **步骤 4：实现 Host 装配**
+- [x] **步骤 4：实现 Host 装配**
 
 `src/index.js` 导出 `inject = ["typert"]`，从 `@dsh-embedded/workbench-core/typert` 导入 `TYPERT`，调用公开 seam `ctx.typert.register(TYPERT)`；随后 `ctx.plugin(core, { providers: PROVIDERS, packageBaseUrl: import.meta.url })` 并 `await fiber.await()`。`packageBaseUrl` 只用于从 Bundle 依赖树定位 Optional package，不进入 Capability snapshot。失败时先 dispose Core Fiber，再撤销 Typert registration；正常 disposer 也按该逆序执行。
 
-- [ ] **步骤 5：实现 Client Remote 装配和 ModuleLoader 构建**
+- [x] **步骤 5：实现 Client Remote 装配和 ModuleLoader 构建**
 
 `src/client-entry.js`：
 
@@ -798,7 +798,7 @@ window.__ModuleLoader__.load({
 
 UI manifest 的 Client inject 固定包含 `@deepseek-ai/dsh-api-gateway`、`@deepseek-ai/dsh-client-runtime` 和 `@deepseek-ai/dsh-client-ui-settings`，版本均为 rc.2；UI 的 Cordis `inject` 再等待 `remote.workbenchCapabilities`，因此 UI 不会早于 Bundle Remote mount 执行业务 apply。
 
-- [ ] **步骤 6：验证并提交**
+- [x] **步骤 6：验证并提交**
 
 ```powershell
 npm run build

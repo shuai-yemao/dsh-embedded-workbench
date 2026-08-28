@@ -68,7 +68,7 @@ T-012 rc.2 最终验证与交接
 | 5 | T-005 | 实现单能力 Gate 与 Core Controller | T-004 | `firmware-engineer` | `mcu-workbench:tdd` | `mcu-workbench:codebase-design` | host | pass |
 | 6 | T-006 | 注册 Settings 唯一事实源 | T-005 | `firmware-engineer` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tdd` | host | pass |
 | 7 | T-007 | 实现 Typert Gateway、生成物和 Core 组合根 | T-006 | `toolchain-engineer` | `mcu-workbench:tools-build` | `mcu-workbench:tdd` | host/build | pass |
-| 8 | T-008 | 将根包收敛为 Bundle 装配层 | T-007 | `system-architect` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tools-build` | static/host/build | not-run |
+| 8 | T-008 | 将根包收敛为 Bundle 装配层 | T-007 | `system-architect` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tools-build` | static/host/build | pass |
 | 9 | T-009 | 实现 UI Controller 状态同步 | T-008 | `firmware-engineer` | `mcu-workbench:tdd` | `mcu-workbench:frontend-excellence` | host | not-run |
 | 10 | T-010 | 实现 Settings UI 与持续错误提示 | T-009 | `firmware-engineer` | `mcu-workbench:frontend-excellence` | `mcu-workbench:tdd` | host/build | not-run |
 | 11 | T-011 | 执行一次安装分发阻断门 | T-010 | `verification-engineer` | `mcu-workbench:tools-verification` | `mcu-workbench:tools-build` | static/build/runtime | not-run |
@@ -341,7 +341,7 @@ T-012 rc.2 最终验证与交接
 | supporting_skills | `mcu-workbench:tools-build`, `mcu-workbench:tdd` |
 | allocation_evidence | 根包只作为唯一安装入口、Provider 描述符和 Host/Client 组合根。 |
 | confidence | `user-confirmed` |
-| status | `not-run` |
+| status | `pass` |
 
 #### 目标、步骤与边界
 
@@ -359,7 +359,7 @@ T-012 rc.2 最终验证与交接
 | 证据等级 | `static/host/build` |
 | 命令或条件 | `npm run build`; `node --test test/backend.test.js test/package-contract.test.js` |
 | 预期结果 | 单 row、描述符零实现 import、Host/Client 使用官方 seam，构建通过。 |
-| 当前状态 | `not-run` |
+| 当前状态 | `pass`：4 个根包主机测试通过；Host 按 `Typert register → Core Fiber await` 装配，startup 失败及正常释放均逆序 `Core dispose → Typert unregister`；`npm run build` 生成 ModuleLoader Client，VM probe 确认仅暴露 `inject=["remote"]` 并执行生成 Remote 的 `$mount`。 |
 
 - 回滚：revert T-008；需要官方源码修改或额外总线时停止。
 
@@ -519,7 +519,7 @@ T-012 rc.2 最终验证与交接
 | T-005 | Gate/Controller 故障隔离 | host | gate/controller tests | 最新 desired 收敛，A 不影响 B | pass |
 | T-006 | Settings 唯一 desired 源 | host | Settings Owner 3 tests + Core 16 tests + `settingsNamespace("dsh-embedded-workbench")` | 合法 namespace、初始/差量 desired、单项错误隔离和 watcher 释放通过；runtime 持久化留 T-011 | pass |
 | T-007 | Typert 三方法和 Core 清理 | host/build | Gateway 3 tests + `tsc -b` + rc.2 overlay generator + Host Gateway unknown-field probe | 严格 artifact 生成；仅 `list/reconcile/retry`，未知字段 `arguments-invalid`，Core 释放 Settings observer | pass |
-| T-008 | 单 Bundle 装配 | static/host/build | root tests + build | 单 row、无私有反向依赖 | not-run |
+| T-008 | 单 Bundle 装配 | static/host/build | 4 root tests + `npm run build` + ModuleLoader VM probe | 单 row；声明式 Provider；Host/Core 和 Client/Remote 均使用 rc.2 seam | pass |
 | T-009 | UI 状态同步资源有界 | host | controller fake-clock tests | timer/订阅对称 | not-run |
 | T-010 | Settings UI 持续错误/重启提示 | host/build | UI tests + build | 每能力独立控制与错误 | not-run |
 | T-011 | 一次安装和精确卸载 | runtime | `verify:m2:runtime` | Optional 缺失可降级、设置保留 | not-run |

@@ -1,46 +1,68 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-const marker = "[dsh-embedded-workbench] M0 loaded";
+import * as host from "../src/index.js";
 
-test("host apply creates a private lifecycle and returns one disposer", async () => {
-	const messages = [];
-	const originalLog = console.log;
-	const rejectContextUse = (operation, property) => {
-		throw new Error(
-			`unexpected context ${operation}: ${String(property ?? "")}`
-		);
+test("Host registers the generated Typert contribution before one Core Fiber and unwinds in reverse", async () => {
+	const operations = [];
+	const registrations = [];
+	const coreFiber = {
+		async await() { operations.push("core.await"); },
+		async dispose() { operations.push("core.dispose"); }
 	};
-	const context = new Proxy(Object.create(null), {
-		defineProperty: (_target, property) => rejectContextUse("define", property),
-		deleteProperty: (_target, property) => rejectContextUse("delete", property),
-		get: (_target, property) => rejectContextUse("get", property),
-		getOwnPropertyDescriptor: (_target, property) =>
-			rejectContextUse("describe", property),
-		getPrototypeOf: () => rejectContextUse("getPrototypeOf"),
-		has: (_target, property) => rejectContextUse("has", property),
-		isExtensible: () => rejectContextUse("isExtensible"),
-		ownKeys: () => rejectContextUse("ownKeys"),
-		preventExtensions: () => rejectContextUse("preventExtensions"),
-		set: (_target, property) => rejectContextUse("set", property),
-		setPrototypeOf: () => rejectContextUse("setPrototypeOf")
-	});
+	const context = {
+		typert: {
+			register(contribution) {
+				operations.push("typert.register");
+				registrations.push(contribution);
+				return async () => operations.push("typert.dispose");
+			}
+		},
+		plugin(plugin, config) {
+			operations.push("core.plugin");
+			assert.equal(typeof plugin.apply, "function");
+			assert.equal(plugin.inject.includes("settings"), true);
+			assert.equal(config.providers.length, 1);
+			assert.equal(config.providers[0].capability_id, "reference.lifecycle");
+			assert.equal(config.packageBaseUrl, new URL("../src/index.js", import.meta.url).href);
+			return coreFiber;
+		}
+	};
 
-	console.log = (...args) => messages.push(args);
-	try {
-		const host = await import("../src/index.js");
-		const result = host.apply(context);
+	assert.deepEqual(Object.keys(host).sort(), ["apply", "inject", "name"]);
+	assert.equal(host.name, "dsh-embedded-workbench");
+	assert.deepEqual(host.inject, ["typert"]);
 
-		assert.deepEqual(Object.keys(host).sort(), ["apply", "name"]);
-		assert.equal(host.name, "dsh-embedded-workbench");
-		assert.equal(typeof result?.then, "function");
-		const disposer = await result;
-		assert.equal(typeof disposer, "function");
-		await disposer();
-	} finally {
-		console.log = originalLog;
-	}
+	const dispose = await host.apply(context);
+	assert.equal(registrations.length, 1);
+	assert.equal(registrations[0].face, "host");
+	assert.deepEqual(operations, ["typert.register", "core.plugin", "core.await"]);
 
-	assert.deepEqual(messages[0], [marker]);
-	assert.ok(messages.slice(1).every(([entry]) => typeof entry === "string"));
+	await dispose();
+	assert.deepEqual(operations, ["typert.register", "core.plugin", "core.await", "core.dispose", "typert.dispose"]);
+});
+
+test("Host rolls back the Core Fiber and Typert registration if Core startup rejects", async () => {
+	const operations = [];
+	const context = {
+		typert: {
+			register() {
+				operations.push("typert.register");
+				return async () => operations.push("typert.dispose");
+			}
+		},
+		plugin() {
+			operations.push("core.plugin");
+			return {
+				async await() {
+					operations.push("core.await");
+					throw new Error("fixture Core startup failure");
+				},
+				async dispose() { operations.push("core.dispose"); }
+			};
+		}
+	};
+
+	await assert.rejects(() => host.apply(context), /fixture Core startup failure/);
+	assert.deepEqual(operations, ["typert.register", "core.plugin", "core.await", "core.dispose", "typert.dispose"]);
 });

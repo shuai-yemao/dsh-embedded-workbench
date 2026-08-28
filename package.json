@@ -12,14 +12,14 @@
   ],
   "exports": {
     ".": "./src/index.js",
-    "./client": "./src/client.js",
+    "./client": "./lib/client.js",
     "./cordis.patch.yml": "./cordis.patch.yml",
     "./package.json": "./package.json"
   },
   "files": [
     "src/index.js",
-    "src/client.js",
-    "src/workbench-lifecycle.js",
+    "src/providers.js",
+    "lib/client.js",
     "cordis.patch.yml"
   ],
   "scripts": {
@@ -39,8 +39,8 @@
     },
     "client": {
       "inject": [
-        "@deepseek-ai/dsh-client-runtime",
-        "@deepseek-ai/dsh-client-ui-settings"
+        "@deepseek-ai/dsh-api-gateway",
+        "@dsh-embedded/workbench-ui"
       ],
       "platform": "web"
     }
@@ -54,9 +54,7 @@
     "@dsh-embedded/provider-reference": "0.0.0"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "4.0.1",
-    "@deepseek-ai/dsh-client-runtime": "0.1.1-rc.2",
-    "@deepseek-ai/dsh-client-ui-settings": "0.1.1-rc.2"
+    "@deepseek-ai/cordis": "4.0.1"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "4.0.1",
