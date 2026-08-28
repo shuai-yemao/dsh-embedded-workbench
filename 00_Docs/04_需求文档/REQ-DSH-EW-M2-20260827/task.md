@@ -266,14 +266,14 @@ T-012 rc.2 最终验证与交接
 |---|---|
 | order | `6` |
 | source_plan_ids | `Plan 任务 6` |
-| source_spec_ids | `Q-M2-07/08/09/13`、`V-M2-09` |
+| source_spec_ids | `Q-M2-07/08/09/13/14`、`V-M2-09` |
 | owner_agent | `firmware-engineer` |
 | support_agents | `system-architect` |
 | owner_skill | `mcu-workbench:workflow-ai-collab` |
 | supporting_skills | `mcu-workbench:tdd` |
 | allocation_evidence | Settings owner 负责唯一 desired 事实源及差量协调，不拥有 Provider 生命周期。 |
 | confidence | `confirmed` |
-| status | `ready` |
+| status | `pass` |
 
 #### 目标、步骤与边界
 
@@ -289,8 +289,8 @@ T-012 rc.2 最终验证与交接
 |---|---|
 | 证据等级 | `host` |
 | 命令或条件 | `npx tsx --test packages/workbench-core/test/settings.test.ts` |
-| 预期结果 | 持久化、单能力错误隔离和差量 reconcile 通过，其他 namespace 不受影响。 |
-| 当前状态 | `ready`：2026-08-28 已由用户确认采用 `dsh-embedded-workbench`；真实 rc.2 `settingsNamespace()` 已接受该值。未创建替代存储或通信总线。 |
+| 预期结果 | 默认值、初始 desired、单能力错误隔离、差量 reconcile 和普通 dispose 不写 Settings 文档通过；实际持久化/重装恢复留待 T-011 隔离 rc.2 runtime。 |
+| 当前状态 | `pass`：真实 rc.2 `settingsNamespace("dsh-embedded-workbench")` 已接受；3 个 Settings Owner 主机测试和 Core 全量 16 个测试通过。Owner 仅注册/读取/watch，不调用 `update/replace`，dispose 仅释放 watcher；未创建替代存储或通信总线。 |
 
 - 回滚：revert T-006；真实 Settings 签名不符则停止并回 Spec。
 
@@ -517,7 +517,7 @@ T-012 rc.2 最终验证与交接
 | T-003 | Reference 实例和资源隔离 | host/build | provider test + tsc | 故障/超时不跨实例 | pass |
 | T-004 | import 前兼容 | host | catalog/resolver tests | missing/incompatible import=0 | pass |
 | T-005 | Gate/Controller 故障隔离 | host | gate/controller tests | 最新 desired 收敛，A 不影响 B | pass |
-| T-006 | Settings 唯一 desired 源 | host | `settingsNamespace("dsh-embedded-workbench")` 最小复现 | rc.2 已接受，准备实现 owner/watch 差量协调 | ready |
+| T-006 | Settings 唯一 desired 源 | host | Settings Owner 3 tests + Core 16 tests + `settingsNamespace("dsh-embedded-workbench")` | 合法 namespace、初始/差量 desired、单项错误隔离和 watcher 释放通过；runtime 持久化留 T-011 | pass |
 | T-007 | Typert 三方法和 Core 清理 | host/build | gateway + generator | strict `list/retry/reconcile` | not-run |
 | T-008 | 单 Bundle 装配 | static/host/build | root tests + build | 单 row、无私有反向依赖 | not-run |
 | T-009 | UI 状态同步资源有界 | host | controller fake-clock tests | timer/订阅对称 | not-run |

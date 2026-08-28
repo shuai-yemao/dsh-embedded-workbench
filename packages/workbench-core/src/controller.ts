@@ -112,6 +112,20 @@ export class CapabilityController {
         return this.reconcile(capabilityId);
     }
 
+    reportSettingsError(capabilityId: string, error: unknown): Readonly<CapabilitySnapshot> {
+        const current = this.snapshot(capabilityId);
+        return this.#catalog.update(capabilityId, {
+            error: asError(
+                "CAPABILITY_SETTINGS_FAILED",
+                "settings",
+                error,
+                this.#now,
+                "检查该能力的设置后重试",
+            ),
+            phase: current.phase,
+        });
+    }
+
     async dispose(): Promise<void> {
         const results = await Promise.allSettled(
             Array.from(this.#entries.values(), (entry) => entry.gate.request(() => this.#stop(entry))),

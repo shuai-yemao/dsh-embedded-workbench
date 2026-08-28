@@ -575,36 +575,36 @@ git commit -m "feat: supervise providers with isolated operation gates"
 - 创建：`packages/workbench-core/src/settings.ts`
 - 创建：`packages/workbench-core/test/settings.test.ts`
 
-- [ ] **步骤 1：编写 Settings 失败测试**
+- [x] **步骤 1：编写 Settings 失败测试**
 
 Fake 必须复现已验证的 rc.2 scope `get/watch/update/replace` 契约。断言默认值来自描述符、一次变更只协调变化 ID、单能力写入失败不阻断其他 ID、普通 dispose 注销 watcher 但不清持久文档。Client 侧 revision 冲突处理留给任务 9，必须使用届时验证的 `settingsScope` 写入接口。
 
-- [ ] **步骤 2：运行测试确认失败**
+- [x] **步骤 2：运行测试确认失败**
 
-运行：`npx tsx --test packages/workbench-core/test/settings.test.ts`
+运行：`npx tsx --tsconfig tsconfig.base.json --test packages/workbench-core/test/settings.test.ts`
 
 预期：FAIL，Settings owner 不存在。
 
-- [ ] **步骤 3：实现 schema 与 watcher**
+- [x] **步骤 3：实现 schema 与 watcher**
 
 ```ts
-const WorkbenchSettingsSchema = z.object({
-  capabilities: z.dict(z.object({ enabled: z.boolean() })).default({})
+const WorkbenchSettingsSchema = Schema.object({
+  capabilities: Schema.dict(Schema.object({ enabled: Schema.boolean() })).default({})
 });
 
 const scope = ctx.settings.register(
   settingsNamespace(WORKBENCH_SETTINGS_NAMESPACE),
   WorkbenchSettingsSchema,
-  { base: { capabilities: defaultsFrom(descriptors) } }
+  { base: { capabilities: defaultsFrom(descriptors) }, applies: "live" }
 );
 ```
 
-Watcher 比较前后 `enabled`，只为变化 ID 调用一次 `controller.reconcile(id)`；watcher 错误转成该能力 `settings` 阶段错误，不停止其他能力。
+Watcher 比较前后 `enabled`，只为变化 ID 调用一次 `controller.setDesiredEnabled(id, enabled)`；watcher 错误转成该能力 `settings` 阶段错误，不停止其他能力。
 
-- [ ] **步骤 4：验证并提交**
+- [x] **步骤 4：验证并提交**
 
 ```powershell
-npx tsx --test packages/workbench-core/test/settings.test.ts
+npx tsx --tsconfig tsconfig.base.json --test packages/workbench-core/test/settings.test.ts
 git add packages/workbench-core/src/settings.ts packages/workbench-core/test/settings.test.ts
 git commit -m "feat: persist capability desired state"
 ```

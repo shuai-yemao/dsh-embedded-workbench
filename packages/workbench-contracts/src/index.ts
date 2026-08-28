@@ -1,4 +1,4 @@
-export const WORKBENCH_SETTINGS_NAMESPACE = "dshEmbedded.workbench" as const;
+export const WORKBENCH_SETTINGS_NAMESPACE = "dsh-embedded-workbench" as const;
 export const WORKBENCH_REMOTE_NAMESPACE = "workbenchCapabilities" as const;
 export const WORKBENCH_CONTRACT_VERSION = "1.0.0" as const;
 

@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
     WORKBENCH_CONTRACT_VERSION,
+    WORKBENCH_SETTINGS_NAMESPACE,
     assertProviderManifest,
     freezeCapabilitySnapshot,
     freezeJsonSnapshot,
@@ -13,6 +14,7 @@ import {
 
 test("contract compatibility is decided by a validated major version", () => {
     assert.equal(WORKBENCH_CONTRACT_VERSION, "1.0.0");
+    assert.equal(WORKBENCH_SETTINGS_NAMESPACE, "dsh-embedded-workbench");
     assert.equal(isContractCompatible("1.0.0", 1), true);
     assert.equal(isContractCompatible("1.9.7", 1), true);
     assert.equal(isContractCompatible("2.0.0", 1), false);
