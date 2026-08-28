@@ -37,6 +37,12 @@
 > checkout；不得以本地 shim、手写 `TYPERT` 或修改官方包规避。停止条件 2/B-M2-02 命中，等待
 > Spec 决策新的、已证实公开的 strict 生成 seam。
 
+> 补证（2026-08-28，user-confirmed）：已指定并创建只读官方 checkout
+> `D:\deepseek-harness-rc2`，固定 tag `dsh-v0.1.1-rc.2`、提交
+> `b150a551b8d465e31e418e1b2eaf5e79bbb7d28e`；其中 Protocol/Generator 均为 `0.1.1-rc.2` 且
+> 含 `src/`。该 checkout 是真实源码证据，不自动改变 generator 仅扫描 `<root>/packages` 的限制；
+> 若需下一步，须先设计可复现且不修改官方 checkout 的分析 overlay，并回写 Plan。
+
 ## 1. 文件结构与职责
 
 ### 根 Bundle

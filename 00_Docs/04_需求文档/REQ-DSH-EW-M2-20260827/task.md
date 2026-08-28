@@ -532,7 +532,7 @@ T-012 rc.2 最终验证与交接
 | ID | 类型 | 内容 | 影响任务 | 补证动作 | 状态 |
 |---|---|---|---|---|---|
 | B-M2-01 | 未验证/阻断门 | `optionalDependencies` 在真实 `dsh plugin add/remove` 下的容错和回滚语义 | T-011/T-012 | 本地 registry + 隔离 rc.2 profile | open |
-| B-M2-02 | 已确认/阻断 | 安装的 rc.2 generator 能 `discover` Core，却在 `generate([core],[host])` 中产出 0 artifact：`Remote`/`TypertRemoteService` Type Meta 仅接受 Protocol 源码作为已注册 workspace package（或符号直接位于该模块）；当前独立工程仅有 npm 声明产物 | T-007..T-012 | 由用户确认一个已证实公开 seam：提供匹配 rc.2 的官方 Protocol 源码 workspace/checkout，或升级到能消费已安装 Protocol 声明产物的官方生成器；不得自造 shim、手写 TYPERT、修改官方包或改用私有总线 | open/blocking |
+| B-M2-02 | 已确认/阻断 | 安装的 rc.2 generator 能 `discover` Core，却在 `generate([core],[host])` 中产出 0 artifact：`Remote`/`TypertRemoteService` Type Meta 仅接受 Protocol 源码作为已注册 workspace package（或符号直接位于该模块）；当前独立工程仅有 npm 声明产物。用户已指定只读官方源码 `D:\deepseek-harness-rc2 @ dsh-v0.1.1-rc.2 / b150a551b8d465e31e418e1b2eaf5e79bbb7d28e`，版本与项目 rc.2 一致 | T-007..T-012 | 设计并审查不修改官方 checkout 的可复现分析 overlay，使 Core 与官方 Protocol 源码同处 generator 要求的 `<root>/packages`；不得自造 shim、手写 TYPERT、修改官方包或改用私有总线 | open/blocking |
 | B-M2-03 | 未验证/阻断门 | child Fiber 启动/清理失败后 Core 与兄弟 Fiber 保持 active | T-005/T-012 | Fake + 真实 Cordis 4.0.1 测试 | open |
 | B-M2-04 | 未验证 | Settings 普通卸载保留与重装恢复 | T-006/T-011 | 隔离 settings.yaml remove/reinstall 对比 | open |
 | B-M2-05 | 风险/非阻断 | UI 人工验收需要隔离 rc.2 Web 实例 | T-012 | 自动门通过后启动隔离 Web 并记录观察 | open |
