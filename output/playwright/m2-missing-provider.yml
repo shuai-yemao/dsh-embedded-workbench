@@ -1,0 +1,115 @@
+- generic [ref=f1e1]:
+  - generic [ref=f1e4]:
+    - complementary "DSH 导航" [ref=f1e7]:
+      - generic [ref=f1e126]:
+        - generic [ref=f1e127]:
+          - button "新建任务" [ref=f1e128]
+          - generic [ref=f1e150]:
+            - button "收缩侧边栏" [ref=f1e151] [cursor=pointer]
+            - button "搜索会话" [ref=f1e154] [cursor=pointer]
+        - navigation "主菜单" [ref=f1e158]:
+          - button [ref=f1e159] [cursor=pointer]
+          - button [expanded] [ref=f1e163] [cursor=pointer]
+          - generic [ref=f1e170]:
+            - button [ref=f1e171] [cursor=pointer]
+            - button [ref=f1e176] [cursor=pointer]
+            - button [ref=f1e181] [cursor=pointer]
+            - button [ref=f1e185] [cursor=pointer]
+          - button [ref=f1e190] [cursor=pointer]
+          - button [ref=f1e195] [cursor=pointer]
+        - generic [ref=f1e199]:
+          - generic [ref=f1e200]:
+            - button "任务" [ref=f1e201] [cursor=pointer]
+            - button "频道" [ref=f1e202] [cursor=pointer]
+            - button "定时" [ref=f1e203] [cursor=pointer]
+          - region "工作区会话" [ref=f1e206]:
+            - tree [ref=f1e207]:
+              - region "置顶" [ref=f1e208]:
+                - button "置顶" [expanded] [ref=f1e210] [cursor=pointer]
+                - generic [ref=f1e214]: 拖动项目到此处置顶
+              - region "项目" [ref=f1e217]:
+                - button "项目" [expanded] [ref=f1e219] [cursor=pointer]
+                - generic [ref=f1e223]: 暂无会话
+              - region "最近" [ref=f1e226]:
+                - button "最近" [expanded] [ref=f1e228] [cursor=pointer]
+                - generic [ref=f1e232]: 无聊天
+      - generic [ref=f1e51]:
+        - button "设置" [expanded] [ref=f1e235] [cursor=pointer]
+        - dialog "设置" [ref=f1e243]:
+          - navigation [ref=f1e244]:
+            - generic [ref=f1e245]: 设置
+            - generic [ref=f1e246]:
+              - button "通用设置" [ref=f1e247] [cursor=pointer]
+              - button "手机访问" [ref=f1e253] [cursor=pointer]
+              - button "模型" [ref=f1e259] [cursor=pointer]
+              - button "插件" [ref=f1e264] [cursor=pointer]
+              - button "专家" [ref=f1e268] [cursor=pointer]
+              - button "技能" [ref=f1e273] [cursor=pointer]
+              - button "连接器" [ref=f1e278] [cursor=pointer]
+              - button "已归档" [ref=f1e283] [cursor=pointer]
+              - button "Agent 预设" [ref=f1e288] [cursor=pointer]
+              - button "IM助理" [ref=f1e295] [cursor=pointer]
+              - button "定时任务" [ref=f1e299] [cursor=pointer]
+              - button "插件市场" [ref=f1e304] [cursor=pointer]
+              - button "钱包" [ref=f1e308] [cursor=pointer]
+              - button "文件提及" [ref=f1e314] [cursor=pointer]
+              - button "备份与迁移" [ref=f1e320] [cursor=pointer]
+              - button "侧边卡片" [ref=f1e326] [cursor=pointer]
+              - button "嵌入式开发工作台" [active] [ref=f1e328] [cursor=pointer]
+              - button "关于" [ref=f1e334] [cursor=pointer]
+          - generic [ref=f1e340]:
+            - generic [ref=f1e341]:
+              - button "打开配置文件" [ref=f1e345] [cursor=pointer]
+              - button "关闭" [ref=f1e346] [cursor=pointer]
+            - region [ref=f1e407]:
+              - heading "嵌入式开发工作台" [level=2] [ref=f1e408]
+              - article "Reference Lifecycle" [ref=f1e409]:
+                - heading "Reference Lifecycle" [level=3] [ref=f1e410]
+                - generic [ref=f1e411]:
+                  - generic [ref=f1e412]:
+                    - term [ref=f1e413]: 能力 ID
+                    - definition [ref=f1e414]: reference.lifecycle
+                  - generic [ref=f1e415]:
+                    - term [ref=f1e416]: 可用性
+                    - definition [ref=f1e417]: MISSING
+                  - generic [ref=f1e418]:
+                    - term [ref=f1e419]: 运行阶段
+                    - definition [ref=f1e420]: STOPPED
+                  - generic [ref=f1e421]:
+                    - term [ref=f1e422]: 应用方式
+                    - definition [ref=f1e423]: LIVE
+                - generic [ref=f1e424]:
+                  - checkbox "启用 Reference Lifecycle" [checked] [ref=f1e425]
+                  - text: 启用能力
+                - status [ref=f1e426]: 能力不可用
+                - button "重试" [ref=f1e427]
+                - alert [ref=f1e428]:
+                  - strong [ref=f1e429]: 能力不可用
+                  - paragraph [ref=f1e430]: "reference.lifecycle: CAPABILITY_MISSING"
+                  - paragraph [ref=f1e431]: "discover: 未安装 Optional Provider：@dsh-embedded/provider-reference"
+                  - paragraph [ref=f1e432]: 建议：检查能力包、版本或配置后手动重试
+              - button "恢复默认设置" [ref=f1e433]
+    - generic [ref=f1e65]:
+      - generic [ref=f1e68]:
+        - generic [ref=f1e73]: 探索未至之境
+        - generic [ref=f1e74]: 预览版
+      - generic [ref=f1e75]:
+        - button "选择工作区" [ref=f1e76] [cursor=pointer]
+        - button "标准模式" [ref=f1e84] [cursor=pointer]
+      - generic [ref=f1e94] [cursor=pointer]:
+        - textbox "选择工作区" [ref=f1e97]:
+          - /placeholder: 选择一个工作区开始
+        - generic [ref=f1e98]:
+          - generic [ref=f1e99]:
+            - button "命令" [disabled]
+          - generic [ref=f1e100]:
+            - button "发送消息" [disabled]
+    - generic:
+      - generic:
+        - generic:
+          - scrollbar "会话地图：方向键滚动，Enter 打开线索墙"
+  - group "桌面宠物" [ref=f1e105]:
+    - button "互动菜单：回车或空格打开"
+  - generic [ref=f1e107]:
+    - button "选择一个会话以使用侧边栏" [disabled] [ref=f1e108]
+    - button "选择一个会话以使用侧边栏" [disabled] [ref=f1e112]

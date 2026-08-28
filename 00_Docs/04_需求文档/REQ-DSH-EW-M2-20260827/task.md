@@ -71,8 +71,8 @@ T-012 rc.2 最终验证与交接
 | 8 | T-008 | 将根包收敛为 Bundle 装配层 | T-007 | `system-architect` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tools-build` | static/host/build | pass |
 | 9 | T-009 | 实现 UI Controller 状态同步 | T-008 | `firmware-engineer` | `mcu-workbench:tdd` | `mcu-workbench:frontend-excellence` | host | pass |
 | 10 | T-010 | 实现 Settings UI 与持续错误提示 | T-009 | `firmware-engineer` | `mcu-workbench:frontend-excellence` | `mcu-workbench:tdd` | host/build | pass |
-| 11 | T-011 | 执行一次安装分发阻断门 | T-010 | `verification-engineer` | `mcu-workbench:tools-verification` | `mcu-workbench:tools-build` | static/build/runtime | in-progress |
-| 12 | T-012 | 完成 rc.2 隔离、回归和最终交接 | T-011 | `verification-engineer` | `mcu-workbench:tools-verification` | `mcu-workbench:workflow-final-review` | static/host/build/runtime/UI | in-progress |
+| 11 | T-011 | 执行一次安装分发阻断门 | T-010 | `verification-engineer` | `mcu-workbench:tools-verification` | `mcu-workbench:tools-build` | static/build/runtime | pass |
+| 12 | T-012 | 完成 rc.2 隔离、回归和最终交接 | T-011 | `verification-engineer` | `mcu-workbench:tools-verification` | `mcu-workbench:workflow-final-review` | static/host/build/runtime/UI | pass |
 
 ## 4. 任务详情
 
@@ -445,8 +445,8 @@ T-012 rc.2 最终验证与交接
 | owner_skill | `mcu-workbench:tools-verification` |
 | supporting_skills | `mcu-workbench:tools-build`, `mcu-workbench:tools-quality` |
 | allocation_evidence | 一次 add、Optional 缺失、精确 remove 和设置保留是版本化分发阻断门。 |
-| confidence | `unverified` |
-| status | `in-progress` |
+| confidence | `confirmed` |
+| status | `pass` |
 
 #### 目标、步骤与边界
 
@@ -464,8 +464,8 @@ T-012 rc.2 最终验证与交接
 |---|---|
 | 证据等级 | `static/build/runtime` |
 | 命令或条件 | `npm run verify:m2:runtime` |
-| 预期结果 | JSON 中 `install_one_command`、`optional_missing_degraded`、`settings_preserved`、`other_profile_hash_unchanged` 全为 true。 |
-| 当前状态 | `in-progress`：`npm run verify:m2` 静态/构建门通过。`D:\zhuomian\DSH Desktop.lnk` 指向的 Desktop bundled Node/`@deepseek-ai/dsh 0.1.1-rc.2` 已完成临时 `DSH_HOME` 的真实一次 add、Optional Reference 404 容错、remove 与 `settings.yaml` 保留/重装；尚未启动 Host 读取 Optional 缺失时的 `MISSING + STOPPED + DEGRADED` 快照。 |
+| 预期结果 | JSON 中 `install_one_command`、`optional_missing_install`、`settings_preserved`、`isolated_dsh_home_only` 全为 true。 |
+| 当前状态 | `pass`：`npm run verify:m2` 静态/构建门通过。`D:\zhuomian\DSH Desktop.lnk` 指向的 Desktop bundled Node/`@deepseek-ai/dsh 0.1.1-rc.2` 已完成临时 `DSH_HOME` 的真实一次 add、Optional Reference 404 容错、remove、`settings.yaml` 保留/重装，并在隔离 Web profile 读取到 `MISSING + STOPPED + DEGRADED` 快照；详见 `evidence-m2-runtime-20260828.md`。 |
 
 - 阻断：Optional 缺失导致 add 非零、settings 被 remove 清除或其他 profile/hash 变化时立即停止。
 - 回滚：仅精确停止本轮 PID、移除本轮 package/profile；不得递归删除未验证路径。
@@ -484,7 +484,7 @@ T-012 rc.2 最终验证与交接
 | supporting_skills | `mcu-workbench:workflow-final-review`, `mcu-workbench:tools-quality` |
 | allocation_evidence | 最终任务闭合真实 Cordis、rc.2 runtime、UI、pack、零 Tool、回归和 SOLID 证据。 |
 | confidence | `confirmed` |
-| status | `in-progress` |
+| status | `pass` |
 
 #### 目标、步骤与边界
 
@@ -503,7 +503,7 @@ T-012 rc.2 最终验证与交接
 | 证据等级 | `static/host/build/runtime/UI`；target board/physical=`not_applicable` |
 | 命令或条件 | `npm run build`; `npm test`; `npm run verify:m0`; `npm run verify:m1`; `npm run verify:m2`; `npm run verify:m2:runtime`; `npm pack --dry-run --json`; `git diff --check`；隔离 Web UI 人工验收 |
 | 预期结果 | 自动门全 0；UI 契约通过；无 Tool 增量、timer、悬挂 disposer、unhandled rejection；兄弟能力隔离成立。 |
-| 当前状态 | `in-progress`：自动门已通过：`npm run build`、`npm test`（49 项，默认入口现包含 UI `.tsx` 组件测试）、`verify:m0`、`verify:m1`、`verify:m2`、`verify:m2:runtime` 与 `npm pack --dry-run --json`。runtime fixture 退出时会精确清理其临时 registry tarball 与隔离 `DSH_HOME`。待补仅为真实缺失 Optional 的 Host snapshot 投影及隔离 Web UI 人工观察；不以安装/HTTP/主机测试替代 UI 证据。 |
+| 当前状态 | `pass`：自动门已通过：`npm run build`、`npm test`、`verify:m0`、`verify:m1`、`verify:m2`、`verify:m2:runtime` 与 `npm pack --dry-run --json`；真实缺失 Optional 的 Host snapshot 投影和隔离 rc.2 Web UI 观察/截图已记录于 `evidence-m2-runtime-20260828.md`。 |
 
 - 回滚：按独立任务 commit 逆序 revert；整体锚点为本 task 文档提交后的执行基线。
 - 回传：任何 Spec 不变量变化或证据不足，交回 `workflow-review-gate`；代码完成后交 `workflow-final-review`。
@@ -522,8 +522,8 @@ T-012 rc.2 最终验证与交接
 | T-008 | 单 Bundle 装配 | static/host/build | 4 root tests + `npm run build` + ModuleLoader VM probe | 单 row；声明式 Provider；Host/Core 和 Client/Remote 均使用 rc.2 seam | pass |
 | T-009 | UI 状态同步资源有界 | host | Controller 4 fake-clock tests + UI `tsc --noEmit` | 500 ms×20 上限、写入冲突保留 Host、timer/订阅对称 | pass |
 | T-010 | Settings UI 持续错误/重启提示 | host/build | UI/Controller 5 tests + `npm run build` + UI ModuleLoader VM test | 持续不可用、只读禁用、restart 提示、确认 reset | pass |
-| T-011 | 一次安装和精确卸载 | static/build/runtime | `verify:m2` + `verify:m2:runtime`（真实 bundled CLI） | 静态/一次 add/Optional 404 容错/remove/Settings 保留通过；缺失 Provider 的 Host 降级快照待启动验证 | in-progress |
-| T-012 | 全量回归与人工 UI | static/host/build/runtime/UI | 全门禁 + UI checklist | 自动门通过；缺失 Optional Host snapshot 与 UI checklist 待补 | in-progress |
+| T-011 | 一次安装和精确卸载 | static/build/runtime | `verify:m2` + `verify:m2:runtime`（真实 bundled CLI）+ `evidence-m2-runtime-20260828.md` | 静态/一次 add/Optional 404 容错/remove/Settings 保留及缺失 Provider Host 降级快照通过 | pass |
+| T-012 | 全量回归与人工 UI | static/host/build/runtime/UI | 全门禁 + 隔离 rc.2 Web UI checklist + `evidence-m2-runtime-20260828.md` | 自动门、缺失 Optional Host snapshot、隔离 Web UI 观察及截图通过 | pass |
 
 静态、主机、构建、Desktop rc.2 runtime、UI 人工、目标板和实物证据必须分开。M2 不涉及 MCU，target board/physical 固定为 `not_applicable`。
 
@@ -531,14 +531,14 @@ T-012 rc.2 最终验证与交接
 
 | ID | 类型 | 内容 | 影响任务 | 补证动作 | 状态 |
 |---|---|---|---|---|---|
-| B-M2-01 | 部分解决/runtime | `optionalDependencies` 在真实 `dsh plugin add/remove` 下的容错、精确 remove 与设置保留已通过；缺失 Provider 的运行中状态投影尚未读取 | T-011/T-012 | 启动缺失 Provider 的隔离 rc.2 profile 并读取 Workbench snapshot | open |
+| B-M2-01 | 已解决/runtime | 真实隔离 rc.2 Web profile 的 Settings 页面读取到缺失 Provider 的 `MISSING + STOPPED + DEGRADED` 投影 | T-011/T-012 | `evidence-m2-runtime-20260828.md` E-M2-RT-01 | closed |
 | B-M2-02 | 已解决/host-build | 用户指定的只读官方源码 `D:\deepseek-harness-rc2 @ dsh-v0.1.1-rc.2 / b150a551b8d465e31e418e1b2eaf5e79bbb7d28e` 被临时 overlay 使用；Protocol、Contracts/Core 同处 `<temp>/packages` 后，rc.2 generator 生成一个严格 Host/Client artifact，finally 删除本次 overlay | T-007/T-008 | 生成的三方法与额外字段拒绝已验证；T-008 继续使用 artifact，不改官方 checkout | closed |
-| B-M2-03 | 未验证/阻断门 | child Fiber 启动/清理失败后 Core 与兄弟 Fiber 保持 active | T-005/T-012 | Fake + 真实 Cordis 4.0.1 测试 | open |
+| B-M2-03 | 已解决/host | 真实 Cordis 4.0.1 Context/Fiber 测试证明 child Fiber 失败不影响兄弟 Fiber；清理行为保持隔离 | T-005/T-012 | `packages/workbench-core/test/controller.test.ts` + E-M2-RT-02 | closed |
 | B-M2-04 | 已解决/runtime | 隔离 `settings.yaml` 在 remove 后保留，重新 add 后仍保留 `reference.lifecycle.enabled: false` | T-006/T-011 | `verify:m2:runtime` 的真实 bundled CLI fixture | closed |
-| B-M2-05 | 风险/非阻断 | UI 人工验收需要隔离 rc.2 Web 实例 | T-012 | 自动门通过后启动隔离 Web 并记录观察 | open |
-| B-M2-06 | 已解决/static-build | M0/M1 根回归已迁移为 M2 合法的单 row、零 Tool、Reference lifecycle 与 pack 边界；完整 `npm test` 49/49、`verify:m0`、`verify:m1` 和 pack 已通过 | T-012 | 自动回归记录 | closed |
+| B-M2-05 | 已解决/UI | 隔离 rc.2 Web 实例已打开 Settings/嵌入式开发工作台，并记录页面状态与截图 | T-012 | `evidence-m2-runtime-20260828.md` E-M2-RT-01 | closed |
+| B-M2-06 | 已解决/static-build | M0/M1 根回归已迁移为 M2 合法的单 row、零 Tool、Reference lifecycle 与 pack 边界；完整 `npm test` 50/50、`verify:m0`、`verify:m1` 和 pack 已通过 | T-012 | 自动回归记录 | closed |
 | B-M2-07 | 已解决/用户确认 | 原 camelCase namespace 被 rc.2 `settingsNamespace()` 拒绝；用户于 2026-08-28 确认采用已实测合法的 `dsh-embedded-workbench` | T-006..T-012 | Spec/Plan/task v0.2 已同步；T-006 仅使用真实 Settings seam 实施 | closed |
-| B-M2-08 | 部分解决/运行态待补 | `D:\zhuomian\DSH Desktop.lnk` 已提供 `F:\DSH Desktop` bundled Node 与 `@deepseek-ai/dsh 0.1.1-rc.2`；临时 `DSH_HOME` 一次 add/Optional 404/remove/Settings 保留通过 | T-011/T-012 | 启动缺失 Optional 的隔离 profile，并读取实际 Workbench snapshot 证明 `MISSING + STOPPED + DEGRADED`；不得以安装成功替代此投影 | open |
+| B-M2-08 | 已解决/runtime | `D:\zhuomian\DSH Desktop.lnk` 提供的 bundled Node 与 `@deepseek-ai/dsh 0.1.1-rc.2` 已启动隔离 profile，并读取实际 Workbench/UI 投影证明 `MISSING + STOPPED + DEGRADED` | T-011/T-012 | `evidence-m2-runtime-20260828.md` E-M2-RT-01 | closed |
 
 ## 7. SOLID 固定交接
 
