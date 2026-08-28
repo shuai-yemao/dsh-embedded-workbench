@@ -29,6 +29,14 @@
 
 失败时不得自动采用“Bundle 内嵌 Provider 产物”的 B2 方案；先把验证事实写入 Spec v0.2 并重新审查。
 
+> 执行记录（2026-08-28）：T-007 已实测 rc.2 `WorkspaceTypertGenerator` 可发现
+> `@dsh-embedded/workbench-core`，但对仅含已安装 npm Protocol 声明产物的独立 workspace，
+> `generate(["@dsh-embedded/workbench-core"], ["host"])` 返回 0 个 artifact。其公开分析实现仅将
+> `Remote`/`TypertRemoteService` 识别为 Type Meta，当 Protocol 源码是同一 aggregate tsconfig 中的
+> 已注册 workspace package（或符号声明直接位于该模块）时才成立。当前项目没有官方 Protocol 源码
+> checkout；不得以本地 shim、手写 `TYPERT` 或修改官方包规避。停止条件 2/B-M2-02 命中，等待
+> Spec 决策新的、已证实公开的 strict 生成 seam。
+
 ## 1. 文件结构与职责
 
 ### 根 Bundle
@@ -618,11 +626,11 @@ git commit -m "feat: persist capability desired state"
 - 创建：`scripts/generate-typert.mjs`
 - 修改：`packages/workbench-core/package.json`
 
-- [ ] **步骤 1：编写 Gateway 失败测试**
+- [x] **步骤 1：编写 Gateway 失败测试**
 
 断言 namespace 精确为 `workbenchCapabilities`；未知 ID 拒绝且不调用 Controller；cleanup 残留能力的 retry 拒绝；list 返回深冻结快照。
 
-- [ ] **步骤 2：实现三个 Remote 方法**
+- [x] **步骤 2：实现三个 Remote 方法**
 
 ```ts
 export class WorkbenchCapabilitiesGateway extends TypertRemoteService {
@@ -647,11 +655,11 @@ export class WorkbenchCapabilitiesGateway extends TypertRemoteService {
 }
 ```
 
-- [ ] **步骤 3：实现 Core 组合与逆序释放**
+- [x] **步骤 3：实现 Core 组合与逆序释放**
 
 创建顺序固定为 Catalog → Controller → Settings owner → Gateway → initial allSettled reconcile；释放顺序为停止 Settings watcher → 分别停止所有 Provider → 释放 Gateway/Core Fiber。任一 Provider cleanup 失败只进入汇总错误，不跳过其他 Provider。
 
-- [ ] **步骤 4：生成严格 Typert 产物**
+- [ ] **步骤 4：生成严格 Typert 产物（blocked：B-M2-02）**
 
 `scripts/generate-typert.mjs` 必须调用：
 
@@ -665,7 +673,7 @@ const artifacts = generator.generate(
 
 对每个 artifact 写入 `lib/typert.host.js`、`lib/typert.host.d.ts`；存在 `artifact.remote` 时同时写 `lib/typert.remote-client.js`、`.d.ts`、`.d.ts.map`。脚本断言恰好一个 Host artifact 且包含 `list/retry/reconcile`。
 
-- [ ] **步骤 5：验证生成结果**
+- [ ] **步骤 5：验证生成结果（blocked：等待步骤 4）**
 
 运行：
 
@@ -677,7 +685,7 @@ node -e "import('./packages/workbench-core/lib/typert.host.js').then(m => consol
 
 预期：输出包含且仅包含 `list,retry,reconcile`；生成 schema 为 strict；未知字段的 Host 调用测试返回校验失败。
 
-- [ ] **步骤 6：提交**
+- [ ] **步骤 6：提交（blocked：等待步骤 4/5）**
 
 ```powershell
 git add packages/workbench-core scripts/generate-typert.mjs tsconfig*.json

@@ -67,7 +67,7 @@ T-012 rc.2 最终验证与交接
 | 4 | T-004 | 实现 Catalog 与 import 前兼容检查 | T-003 | `system-architect` | `mcu-workbench:codebase-design` | `mcu-workbench:tdd` | host/build | pass |
 | 5 | T-005 | 实现单能力 Gate 与 Core Controller | T-004 | `firmware-engineer` | `mcu-workbench:tdd` | `mcu-workbench:codebase-design` | host | pass |
 | 6 | T-006 | 注册 Settings 唯一事实源 | T-005 | `firmware-engineer` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tdd` | host | ready |
-| 7 | T-007 | 实现 Typert Gateway、生成物和 Core 组合根 | T-006 | `toolchain-engineer` | `mcu-workbench:tools-build` | `mcu-workbench:tdd` | host/build | not-run |
+| 7 | T-007 | 实现 Typert Gateway、生成物和 Core 组合根 | T-006 | `toolchain-engineer` | `mcu-workbench:tools-build` | `mcu-workbench:tdd` | host/build | blocked |
 | 8 | T-008 | 将根包收敛为 Bundle 装配层 | T-007 | `system-architect` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tools-build` | static/host/build | not-run |
 | 9 | T-009 | 实现 UI Controller 状态同步 | T-008 | `firmware-engineer` | `mcu-workbench:tdd` | `mcu-workbench:frontend-excellence` | host | not-run |
 | 10 | T-010 | 实现 Settings UI 与持续错误提示 | T-009 | `firmware-engineer` | `mcu-workbench:frontend-excellence` | `mcu-workbench:tdd` | host/build | not-run |
@@ -307,7 +307,7 @@ T-012 rc.2 最终验证与交接
 | supporting_skills | `mcu-workbench:tdd`, `mcu-workbench:workflow-ai-collab` |
 | allocation_evidence | Typert 生成和 package exports 属于构建闭包，Gateway/Core 组合遵循官方 rc.2 seam。 |
 | confidence | `confirmed` |
-| status | `not-run` |
+| status | `blocked` |
 
 #### 目标、步骤与边界
 
@@ -324,7 +324,7 @@ T-012 rc.2 最终验证与交接
 | 证据等级 | `host/build` |
 | 命令或条件 | `npx tsx --test packages/workbench-core/test/gateway.test.ts`; `npx tsc -b`; `node scripts/generate-typert.mjs` |
 | 预期结果 | 仅三方法、strict schema、未知字段拒绝；生成物可导入。 |
-| 当前状态 | `not-run` |
+| 当前状态 | `blocked`：Gateway 的唯一 namespace、三个 Remote marker、未知 ID 前置拒绝与冻结快照已由 2 个主机测试通过；Core 组合根、真实 `WorkspaceTypertGenerator` 调用和生成脚本已创建，`npx tsc -b` 通过。严格生成时 `discover([host])` 可发现 Core，但 `generate(["@dsh-embedded/workbench-core"],["host"])` 返回 0 个 artifact；不接受本地 Type Meta shim、手写 `TYPERT` 或修改官方包。 |
 
 - 回滚：revert T-007；真实 generator API 不符时停止并回 Spec，不手写协议替代。
 
@@ -518,7 +518,7 @@ T-012 rc.2 最终验证与交接
 | T-004 | import 前兼容 | host | catalog/resolver tests | missing/incompatible import=0 | pass |
 | T-005 | Gate/Controller 故障隔离 | host | gate/controller tests | 最新 desired 收敛，A 不影响 B | pass |
 | T-006 | Settings 唯一 desired 源 | host | Settings Owner 3 tests + Core 16 tests + `settingsNamespace("dsh-embedded-workbench")` | 合法 namespace、初始/差量 desired、单项错误隔离和 watcher 释放通过；runtime 持久化留 T-011 | pass |
-| T-007 | Typert 三方法和 Core 清理 | host/build | gateway + generator | strict `list/retry/reconcile` | not-run |
+| T-007 | Typert 三方法和 Core 清理 | host/build | Gateway 2 tests + `tsc -b` + generator 最小调用 | Gateway 三方法通过；strict artifact=0，等待公开生成 seam | blocked |
 | T-008 | 单 Bundle 装配 | static/host/build | root tests + build | 单 row、无私有反向依赖 | not-run |
 | T-009 | UI 状态同步资源有界 | host | controller fake-clock tests | timer/订阅对称 | not-run |
 | T-010 | Settings UI 持续错误/重启提示 | host/build | UI tests + build | 每能力独立控制与错误 | not-run |
@@ -532,7 +532,7 @@ T-012 rc.2 最终验证与交接
 | ID | 类型 | 内容 | 影响任务 | 补证动作 | 状态 |
 |---|---|---|---|---|---|
 | B-M2-01 | 未验证/阻断门 | `optionalDependencies` 在真实 `dsh plugin add/remove` 下的容错和回滚语义 | T-011/T-012 | 本地 registry + 隔离 rc.2 profile | open |
-| B-M2-02 | 未验证/阻断门 | JS workspace 接入 Typert generator 的最小构建闭包 | T-007/T-008 | 真实 generator 产物与 strict schema 测试 | open |
+| B-M2-02 | 已确认/阻断 | 安装的 rc.2 generator 能 `discover` Core，却在 `generate([core],[host])` 中产出 0 artifact：`Remote`/`TypertRemoteService` Type Meta 仅接受 Protocol 源码作为已注册 workspace package（或符号直接位于该模块）；当前独立工程仅有 npm 声明产物 | T-007..T-012 | 由用户确认一个已证实公开 seam：提供匹配 rc.2 的官方 Protocol 源码 workspace/checkout，或升级到能消费已安装 Protocol 声明产物的官方生成器；不得自造 shim、手写 TYPERT、修改官方包或改用私有总线 | open/blocking |
 | B-M2-03 | 未验证/阻断门 | child Fiber 启动/清理失败后 Core 与兄弟 Fiber 保持 active | T-005/T-012 | Fake + 真实 Cordis 4.0.1 测试 | open |
 | B-M2-04 | 未验证 | Settings 普通卸载保留与重装恢复 | T-006/T-011 | 隔离 settings.yaml remove/reinstall 对比 | open |
 | B-M2-05 | 风险/非阻断 | UI 人工验收需要隔离 rc.2 Web 实例 | T-012 | 自动门通过后启动隔离 Web 并记录观察 | open |
