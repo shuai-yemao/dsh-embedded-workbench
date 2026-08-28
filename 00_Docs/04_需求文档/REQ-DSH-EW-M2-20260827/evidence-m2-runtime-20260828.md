@@ -30,7 +30,7 @@
 - Playwright headed 快照：[m2-missing-provider.yml](../../../output/playwright/m2-missing-provider.yml)。
 - 可视化截图：[m2-missing-provider.png](../../../output/playwright/m2-missing-provider.png)。
 
-结论：`V-M2-13`、`V-M2-14`、`V-M2-16` 的缺失 Provider 运行态投影与 UI 降级证据已补齐；未将 HTTP 200 或静态安装结果作为替代证据。
+结论：`V-M2-06`、`V-M2-13`、`V-M2-16` 的缺失 Provider 运行态投影与 UI 降级证据已补齐；未将 HTTP 200 或静态安装结果作为替代证据。
 
 ## E-M2-RT-02：真实 Cordis Fiber 隔离
 
