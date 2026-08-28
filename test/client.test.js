@@ -18,7 +18,7 @@ test("generated root Client composes the Remote mount and embedded Settings sect
 		if (moduleId === "react/jsx-runtime") return { jsx: (type, props) => ({ type, props }), jsxs: (type, props) => ({ type, props }) };
 		throw new Error(`unexpected external module: ${moduleId}`);
 	});
-	assert.deepEqual(Array.from(client.inject), ["slots", "settingsScope", "remote", "remote.workbenchCapabilities"]);
+	assert.deepEqual(Array.from(client.inject), ["slots", "settingsScope", "remote"]);
 	assert.equal(typeof client.apply, "function");
 	const operations = [];
 	const context = {

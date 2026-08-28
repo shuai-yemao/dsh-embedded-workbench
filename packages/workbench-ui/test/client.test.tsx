@@ -78,7 +78,7 @@ test("Settings view exposes all capability state, persistent unavailable details
 		if (type === "button") buttons.push(props);
 	});
 
-	assert.deepEqual(inject, ["slots", "settingsScope", "remote", "remote.workbenchCapabilities"]);
+	assert.deepEqual(inject, ["slots", "settingsScope", "remote"]);
 	assert.ok(text.includes("能力不可用"));
 	assert.ok(text.includes("需要重启"));
 	assert.ok(text.includes("CAPABILITY_MISSING"));

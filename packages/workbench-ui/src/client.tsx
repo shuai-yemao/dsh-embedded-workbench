@@ -9,7 +9,10 @@ import {
     type WorkbenchUiState,
 } from "./controller.js";
 
-export const inject = ["slots", "settingsScope", "remote", "remote.workbenchCapabilities"] as const;
+// `workbenchCapabilities` is mounted by the root client entry.  It must not
+// appear here: static injection would wait for that Remote before the root
+// entry can execute `$mount()`, creating a client boot cycle.
+export const inject = ["slots", "settingsScope", "remote"] as const;
 const SECTION_ID = "dsh-embedded-workbench";
 const SECTION_LABEL = "嵌入式开发工作台";
 
