@@ -815,21 +815,21 @@ git commit -m "refactor: compose M2 workbench bundle"
 - 创建：`packages/workbench-ui/src/controller.ts`
 - 创建：`packages/workbench-ui/test/controller.test.ts`
 
-- [ ] **步骤 1：编写刷新和资源清理失败测试**
+- [x] **步骤 1：编写刷新和资源清理失败测试**
 
 使用 fake clock，断言：页面打开调用一次 list；Settings 写完、retry/reconcile、`connection/reset` 后各刷新一次；仅 STARTING/STOPPING 每 500 ms 轮询，最多 20 次；稳定态和 dispose 后 timer 数为 0。
 
-- [ ] **步骤 2：编写设置写入与 reset 测试**
+- [x] **步骤 2：编写设置写入与 reset 测试**
 
 `setEnabled(id, value)` 从最新 scope snapshot 克隆整个 `capabilities` 字段，只改目标 ID，再调用 `scope.set("capabilities", next)`；写入完成后调用单 ID reconcile。`reset()` 经确认后调用 `scope.unset("capabilities")`，M2 因 namespace 只有该字段而等价于清除 Workbench namespace，不影响其他 namespace。
 
-- [ ] **步骤 3：运行测试确认失败**
+- [x] **步骤 3：运行测试确认失败**
 
 运行：`npx tsx --test packages/workbench-ui/test/controller.test.ts`
 
 预期：FAIL，UI Controller 不存在。
 
-- [ ] **步骤 4：实现 Controller**
+- [x] **步骤 4：实现 Controller**
 
 固定常量：
 
@@ -843,7 +843,7 @@ Controller 只保存当前 snapshot、loading/error、一个 timeout handle 和�
 
 rc.2 `SettingsScopeController.set/unset` 会在写入失败时恢复镜像而不把冲突继续抛给调用者；因此写入完成后必须重读 scope snapshot 并核对目标值。目标未提交时保留 Host 最新值、显示 `settings` 阶段错误，禁止以 UI 草稿覆盖它。
 
-- [ ] **步骤 5：验证并提交**
+- [x] **步骤 5：验证并提交**
 
 ```powershell
 npx tsx --test packages/workbench-ui/test/controller.test.ts
