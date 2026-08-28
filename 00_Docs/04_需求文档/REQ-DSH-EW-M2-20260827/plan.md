@@ -33,15 +33,22 @@
 > `@dsh-embedded/workbench-core`，但对仅含已安装 npm Protocol 声明产物的独立 workspace，
 > `generate(["@dsh-embedded/workbench-core"], ["host"])` 返回 0 个 artifact。其公开分析实现仅将
 > `Remote`/`TypertRemoteService` 识别为 Type Meta，当 Protocol 源码是同一 aggregate tsconfig 中的
-> 已注册 workspace package（或符号声明直接位于该模块）时才成立。当前项目没有官方 Protocol 源码
-> checkout；不得以本地 shim、手写 `TYPERT` 或修改官方包规避。停止条件 2/B-M2-02 命中，等待
-> Spec 决策新的、已证实公开的 strict 生成 seam。
+> 已注册 workspace package（或符号声明直接位于该模块）时才成立。独立 workspace 的 npm 声明产物
+> 因此不足；不得以本地 shim、手写 `TYPERT` 或修改官方包规避。
 
 > 补证（2026-08-28，user-confirmed）：已指定并创建只读官方 checkout
 > `D:\deepseek-harness-rc2`，固定 tag `dsh-v0.1.1-rc.2`、提交
 > `b150a551b8d465e31e418e1b2eaf5e79bbb7d28e`；其中 Protocol/Generator 均为 `0.1.1-rc.2` 且
 > 含 `src/`。该 checkout 是真实源码证据，不自动改变 generator 仅扫描 `<root>/packages` 的限制；
-> 若需下一步，须先设计可复现且不修改官方 checkout 的分析 overlay，并回写 Plan。
+> 用户已确认允许下一步：实现可复现且不修改官方 checkout 的分析 overlay。overlay 必须通过
+> `mkdtemp()` 在系统临时目录创建，复制且仅复制官方 Protocol、Workbench Contracts/Core 源码到其
+> `<temp>/packages`，用临时 tsconfig 将 Protocol 解析到该副本；生成完毕必定递归删除。它不是
+> 运行时依赖、发布包、Provider 或通信层，生成物仍写回 Workbench Core 的 `lib/`。
+
+> 验证结果（2026-08-28）：overlay 已成功生成一个 Host artifact 与其 Client Remote artifact；方法集为
+> `list,reconcile,retry`。生成后通过真实 `TypertGatewayService` 验证额外参数返回
+> `arguments-invalid`，而非进入业务方法。B-M2-02 以 host/build 证据关闭；Desktop runtime/UI 证据仍留
+> 后续任务。
 
 ## 1. 文件结构与职责
 
@@ -665,7 +672,13 @@ export class WorkbenchCapabilitiesGateway extends TypertRemoteService {
 
 创建顺序固定为 Catalog → Controller → Settings owner → Gateway → initial allSettled reconcile；释放顺序为停止 Settings watcher → 分别停止所有 Provider → 释放 Gateway/Core Fiber。任一 Provider cleanup 失败只进入汇总错误，不跳过其他 Provider。
 
-- [ ] **步骤 4：生成严格 Typert 产物（blocked：B-M2-02）**
+- [x] **步骤 4：经只读源码 analysis overlay 生成严格 Typert 产物**
+
+`scripts/generate-typert.mjs` 从环境变量 `DSH_TYPERT_SOURCE_CHECKOUT` 读取官方 checkout；未设置时
+仅在当前 Windows 开发机默认 `D:\deepseek-harness-rc2`。脚本须验证该 checkout 的 tag/commit 和
+Protocol/Generator package 版本均为 rc.2，然后在 `mkdtemp()` 目录复制 Protocol、Contracts、Core
+为同一 `<temp>/packages` 事实源，调用已安装的 `WorkspaceTypertGenerator`。无论成功或失败都删除
+临时目录；不得在 checkout 创建文件、安装依赖或写入 Git 状态。
 
 `scripts/generate-typert.mjs` 必须调用：
 
@@ -679,7 +692,7 @@ const artifacts = generator.generate(
 
 对每个 artifact 写入 `lib/typert.host.js`、`lib/typert.host.d.ts`；存在 `artifact.remote` 时同时写 `lib/typert.remote-client.js`、`.d.ts`、`.d.ts.map`。脚本断言恰好一个 Host artifact 且包含 `list/retry/reconcile`。
 
-- [ ] **步骤 5：验证生成结果（blocked：等待步骤 4）**
+- [x] **步骤 5：验证生成结果**
 
 运行：
 
@@ -691,7 +704,7 @@ node -e "import('./packages/workbench-core/lib/typert.host.js').then(m => consol
 
 预期：输出包含且仅包含 `list,retry,reconcile`；生成 schema 为 strict；未知字段的 Host 调用测试返回校验失败。
 
-- [ ] **步骤 6：提交（blocked：等待步骤 4/5）**
+- [x] **步骤 6：提交**
 
 ```powershell
 git add packages/workbench-core scripts/generate-typert.mjs tsconfig*.json

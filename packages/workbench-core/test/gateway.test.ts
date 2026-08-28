@@ -3,9 +3,11 @@ import test from "node:test";
 
 import { Context } from "@deepseek-ai/cordis";
 import { remoteMethods } from "@deepseek-ai/dsh-typert-protocol";
-import type { CapabilitySnapshot, WorkbenchSnapshot } from "@dsh-embedded/workbench-contracts";
+import type { SettingsNamespace, SettingsScope } from "@deepseek-ai/dsh-settings";
+import type { CapabilitySnapshot, ProviderDescriptor, WorkbenchSettings, WorkbenchSnapshot } from "@dsh-embedded/workbench-contracts";
 
 import { WorkbenchCapabilitiesGateway, type CapabilityGatewayController } from "../src/gateway.ts";
+import { apply as applyWorkbenchCore } from "../src/index.ts";
 
 const capability: CapabilitySnapshot = {
     capability_id: "fixture.alpha",
@@ -71,4 +73,35 @@ test("Gateway validates the capability before retry or reconcile and returns fro
     const reconciled = await gateway.reconcile("fixture.alpha");
     assert.equal(Object.isFrozen(reconciled), true);
     assert.deepEqual(calls, ["list", "snapshot:fixture.missing", "snapshot:fixture.alpha", "reconcile:fixture.alpha"]);
+});
+
+test("Core owns the Settings observer and disposes the Reference Provider independently", async () => {
+    const context = new Context();
+    let stoppedObserving = false;
+    const scope: SettingsScope<WorkbenchSettings> = {
+        get: () => ({ capabilities: { "reference.lifecycle": { enabled: true } } }),
+        watch: () => () => { stoppedObserving = true; },
+        update: async () => undefined,
+        replace: async () => undefined,
+    };
+    context.provide("settings", {
+        register: <T>(_namespace: SettingsNamespace, _schema: unknown) => scope as unknown as SettingsScope<T>,
+    });
+    const descriptors: readonly ProviderDescriptor[] = [{
+        capability_id: "reference.lifecycle",
+        package_name: "@dsh-embedded/provider-reference",
+        display_name: "Reference Lifecycle",
+        required: false,
+        expected_provider_version: "0.0.0",
+        supported_contract_major: 1,
+        default_enabled: true,
+    }];
+
+    const dispose = await applyWorkbenchCore(context, {
+        descriptors,
+        packageBaseUrl: new URL("../package.json", import.meta.url).href,
+    });
+    await dispose();
+
+    assert.equal(stoppedObserving, true);
 });

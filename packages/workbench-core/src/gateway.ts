@@ -3,9 +3,11 @@ import { Remote, TypertRemoteService } from "@deepseek-ai/dsh-typert-protocol";
 import {
     freezeCapabilitySnapshot,
     freezeWorkbenchSnapshot,
-    type CapabilitySnapshot,
-    type WorkbenchSnapshot,
 } from "@dsh-embedded/workbench-contracts";
+import type {
+    CapabilitySnapshot,
+    WorkbenchSnapshot,
+} from "@dsh-embedded/workbench-contracts/types";
 
 /** The narrow Controller view that the Remote layer may invoke. */
 export interface CapabilityGatewayController {

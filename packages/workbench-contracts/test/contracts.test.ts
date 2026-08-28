@@ -11,8 +11,15 @@ import {
     isContractCompatible,
     isProviderVersionExact,
 } from "../src/index.ts";
+import type { WorkbenchSnapshot as PublicWorkbenchSnapshot } from "@dsh-embedded/workbench-contracts/types";
+
+const publicTypeWitness: PublicWorkbenchSnapshot = {
+    health: "READY",
+    capabilities: [],
+};
 
 test("contract compatibility is decided by a validated major version", () => {
+    assert.equal(publicTypeWitness.health, "READY");
     assert.equal(WORKBENCH_CONTRACT_VERSION, "1.0.0");
     assert.equal(WORKBENCH_SETTINGS_NAMESPACE, "dsh-embedded-workbench");
     assert.equal(isContractCompatible("1.0.0", 1), true);
