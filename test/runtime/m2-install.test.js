@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 import test from "node:test";
@@ -47,29 +47,35 @@ test("one CLI add installs the Bundle and tolerates a missing Optional Provider"
 	assert.ok(dshBin, "DSH_M2_BIN is required");
 	const artifactDir = await mkdtemp(join(tmpdir(), "dsh-ew-m2-pack-"));
 	const home = await mkdtemp(join(tmpdir(), "dsh-ew-m2-home-"));
-	const fullRegistry = await startLocalRegistry(await records(artifactDir, true));
 	try {
-		await addWithRegistry(fullRegistry.url, home, "m2-full");
-		const { stat } = await import("node:fs/promises");
-		assert.equal(await stat(join(home, "profiles", "m2-full", "node_modules", "@dsh-embedded", "provider-reference")).then(() => true, () => false), true);
-		const settingsPath = join(home, "settings.yaml");
-		const settings = 'dsh-embedded-workbench:\n  capabilities:\n    reference.lifecycle:\n      enabled: false\n';
-		await writeFile(settingsPath, settings, "utf8");
-		await removeBundle(home, "m2-full");
-		assert.equal(await stat(join(home, "profiles", "m2-full", "node_modules", "@dsh-embedded", "dsh-embedded-workbench")).then(() => true, () => false), false);
-		assert.equal(await readFile(settingsPath, "utf8"), settings);
-		await addWithRegistry(fullRegistry.url, home, "m2-full");
-		assert.equal(await readFile(settingsPath, "utf8"), settings);
-	} finally {
-		await fullRegistry.close();
-	}
-	const missingRegistry = await startLocalRegistry(await records(artifactDir, false));
-	try {
+		const fullRegistry = await startLocalRegistry(await records(artifactDir, true));
+		try {
+			await addWithRegistry(fullRegistry.url, home, "m2-full");
+			const { stat } = await import("node:fs/promises");
+			assert.equal(await stat(join(home, "profiles", "m2-full", "node_modules", "@dsh-embedded", "provider-reference")).then(() => true, () => false), true);
+			const settingsPath = join(home, "settings.yaml");
+			const settings = 'dsh-embedded-workbench:\n  capabilities:\n    reference.lifecycle:\n      enabled: false\n';
+			await writeFile(settingsPath, settings, "utf8");
+			await removeBundle(home, "m2-full");
+			assert.equal(await stat(join(home, "profiles", "m2-full", "node_modules", "@dsh-embedded", "dsh-embedded-workbench")).then(() => true, () => false), false);
+			assert.equal(await readFile(settingsPath, "utf8"), settings);
+			await addWithRegistry(fullRegistry.url, home, "m2-full");
+			assert.equal(await readFile(settingsPath, "utf8"), settings);
+		} finally {
+			await fullRegistry.close();
+		}
+
+		const missingRegistry = await startLocalRegistry(await records(artifactDir, false));
+		try {
 			await addWithRegistry(missingRegistry.url, home, "m2-missing");
 			const { stat } = await import("node:fs/promises");
 			assert.equal(await stat(join(home, "profiles", "m2-missing", "node_modules", "@dsh-embedded", "dsh-embedded-workbench")).then(() => true, () => false), true);
 			assert.equal(await stat(join(home, "profiles", "m2-missing", "node_modules", "@dsh-embedded", "provider-reference")).then(() => true, () => false), false);
-	} finally {
+		} finally {
 			await missingRegistry.close();
 		}
+	} finally {
+		await rm(artifactDir, { recursive: true, force: true });
+		await rm(home, { recursive: true, force: true });
+	}
 });

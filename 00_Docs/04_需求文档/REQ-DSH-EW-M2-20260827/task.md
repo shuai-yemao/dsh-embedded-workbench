@@ -503,7 +503,7 @@ T-012 rc.2 最终验证与交接
 | 证据等级 | `static/host/build/runtime/UI`；target board/physical=`not_applicable` |
 | 命令或条件 | `npm run build`; `npm test`; `npm run verify:m0`; `npm run verify:m1`; `npm run verify:m2`; `npm run verify:m2:runtime`; `npm pack --dry-run --json`; `git diff --check`；隔离 Web UI 人工验收 |
 | 预期结果 | 自动门全 0；UI 契约通过；无 Tool 增量、timer、悬挂 disposer、unhandled rejection；兄弟能力隔离成立。 |
-| 当前状态 | `in-progress`：自动门已通过：`npm run build`、`npm test`（48 项）、`verify:m0`、`verify:m1`、`verify:m2`、`verify:m2:runtime` 与 `npm pack --dry-run --json`。待补仅为真实缺失 Optional 的 Host snapshot 投影及隔离 Web UI 人工观察；不以安装/HTTP/主机测试替代 UI 证据。 |
+| 当前状态 | `in-progress`：自动门已通过：`npm run build`、`npm test`（49 项，默认入口现包含 UI `.tsx` 组件测试）、`verify:m0`、`verify:m1`、`verify:m2`、`verify:m2:runtime` 与 `npm pack --dry-run --json`。runtime fixture 退出时会精确清理其临时 registry tarball 与隔离 `DSH_HOME`。待补仅为真实缺失 Optional 的 Host snapshot 投影及隔离 Web UI 人工观察；不以安装/HTTP/主机测试替代 UI 证据。 |
 
 - 回滚：按独立任务 commit 逆序 revert；整体锚点为本 task 文档提交后的执行基线。
 - 回传：任何 Spec 不变量变化或证据不足，交回 `workflow-review-gate`；代码完成后交 `workflow-final-review`。
@@ -523,7 +523,7 @@ T-012 rc.2 最终验证与交接
 | T-009 | UI 状态同步资源有界 | host | Controller 4 fake-clock tests + UI `tsc --noEmit` | 500 ms×20 上限、写入冲突保留 Host、timer/订阅对称 | pass |
 | T-010 | Settings UI 持续错误/重启提示 | host/build | UI/Controller 5 tests + `npm run build` + UI ModuleLoader VM test | 持续不可用、只读禁用、restart 提示、确认 reset | pass |
 | T-011 | 一次安装和精确卸载 | static/build/runtime | `verify:m2` + `verify:m2:runtime`（真实 bundled CLI） | 静态/一次 add/Optional 404 容错/remove/Settings 保留通过；缺失 Provider 的 Host 降级快照待启动验证 | in-progress |
-| T-012 | 全量回归与人工 UI | static/host/build/runtime/UI | 全门禁 + UI checklist | V-M2-01..20 闭合 | not-run |
+| T-012 | 全量回归与人工 UI | static/host/build/runtime/UI | 全门禁 + UI checklist | 自动门通过；缺失 Optional Host snapshot 与 UI checklist 待补 | in-progress |
 
 静态、主机、构建、Desktop rc.2 runtime、UI 人工、目标板和实物证据必须分开。M2 不涉及 MCU，target board/physical 固定为 `not_applicable`。
 
@@ -531,12 +531,12 @@ T-012 rc.2 最终验证与交接
 
 | ID | 类型 | 内容 | 影响任务 | 补证动作 | 状态 |
 |---|---|---|---|---|---|
-| B-M2-01 | 未验证/阻断门 | `optionalDependencies` 在真实 `dsh plugin add/remove` 下的容错和回滚语义 | T-011/T-012 | 本地 registry + 隔离 rc.2 profile | open |
+| B-M2-01 | 部分解决/runtime | `optionalDependencies` 在真实 `dsh plugin add/remove` 下的容错、精确 remove 与设置保留已通过；缺失 Provider 的运行中状态投影尚未读取 | T-011/T-012 | 启动缺失 Provider 的隔离 rc.2 profile 并读取 Workbench snapshot | open |
 | B-M2-02 | 已解决/host-build | 用户指定的只读官方源码 `D:\deepseek-harness-rc2 @ dsh-v0.1.1-rc.2 / b150a551b8d465e31e418e1b2eaf5e79bbb7d28e` 被临时 overlay 使用；Protocol、Contracts/Core 同处 `<temp>/packages` 后，rc.2 generator 生成一个严格 Host/Client artifact，finally 删除本次 overlay | T-007/T-008 | 生成的三方法与额外字段拒绝已验证；T-008 继续使用 artifact，不改官方 checkout | closed |
 | B-M2-03 | 未验证/阻断门 | child Fiber 启动/清理失败后 Core 与兄弟 Fiber 保持 active | T-005/T-012 | Fake + 真实 Cordis 4.0.1 测试 | open |
-| B-M2-04 | 未验证 | Settings 普通卸载保留与重装恢复 | T-006/T-011 | 隔离 settings.yaml remove/reinstall 对比 | open |
+| B-M2-04 | 已解决/runtime | 隔离 `settings.yaml` 在 remove 后保留，重新 add 后仍保留 `reference.lifecycle.enabled: false` | T-006/T-011 | `verify:m2:runtime` 的真实 bundled CLI fixture | closed |
 | B-M2-05 | 风险/非阻断 | UI 人工验收需要隔离 rc.2 Web 实例 | T-012 | 自动门通过后启动隔离 Web 并记录观察 | open |
-| B-M2-06 | 已知回归迁移 | T-001 的 M2 workspace/精确依赖/prepack 已与旧 M0/M1“单包、零 dependency/Remote、rc.1”断言冲突；完整根 `npm test`/`verify:m0`/pack 暂非通过证据 | T-012 | 按 Plan 任务12 重写为 M2 合法的单 row、零 Tool、Reference lifecycle、精确 pack 回归；T-007/T-008 补齐 build/prepack 脚本后复跑 | open |
+| B-M2-06 | 已解决/static-build | M0/M1 根回归已迁移为 M2 合法的单 row、零 Tool、Reference lifecycle 与 pack 边界；完整 `npm test` 49/49、`verify:m0`、`verify:m1` 和 pack 已通过 | T-012 | 自动回归记录 | closed |
 | B-M2-07 | 已解决/用户确认 | 原 camelCase namespace 被 rc.2 `settingsNamespace()` 拒绝；用户于 2026-08-28 确认采用已实测合法的 `dsh-embedded-workbench` | T-006..T-012 | Spec/Plan/task v0.2 已同步；T-006 仅使用真实 Settings seam 实施 | closed |
 | B-M2-08 | 部分解决/运行态待补 | `D:\zhuomian\DSH Desktop.lnk` 已提供 `F:\DSH Desktop` bundled Node 与 `@deepseek-ai/dsh 0.1.1-rc.2`；临时 `DSH_HOME` 一次 add/Optional 404/remove/Settings 保留通过 | T-011/T-012 | 启动缺失 Optional 的隔离 profile，并读取实际 Workbench snapshot 证明 `MISSING + STOPPED + DEGRADED`；不得以安装成功替代此投影 | open |
 

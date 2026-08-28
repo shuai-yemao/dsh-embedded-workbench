@@ -918,11 +918,11 @@ git commit -m "feat: add isolated capability settings UI"
 
 实现 `scripts/verify-m2.ps1` 的 package/exports/files、依赖方向、Typert 三方法、唯一 namespace 和零 Tool 检查。它只读取 manifest 与构建产物，不调用 `npm pack`，保证根 `prepack` 可被后续 registry fixture 安全调用。
 
-- [ ] **步骤 2：编写本地 registry fixture 测试**
+- [x] **步骤 2：编写本地 registry fixture 测试**
 
 fixture 仅绑定 `127.0.0.1` 随机端口，服务五个 `npm pack` tarball 的 metadata/tarball；请求其他 package 返回 404。registry 在测试结束后关闭，tarball 和隔离 `DSH_HOME` 位于测试临时目录。
 
-- [ ] **步骤 3：验证 required + optional 正常安装**
+- [x] **步骤 3：验证 required + optional 正常安装**
 
 `verify-m2-runtime.ps1` 使用本机 rc.2：
 
@@ -950,7 +950,7 @@ registry=https://registry.npmjs.org/
 
 预期：命令退出 `0`；Bundle、Contracts、Core、UI 存在；Reference 不存在；Workbench Host 启动并返回 `MISSING + STOPPED + DEGRADED`。
 
-- [ ] **步骤 5：验证 remove 与设置保留**
+- [x] **步骤 5：验证 remove 与设置保留**
 
 在隔离的 `$isolatedDshHome/settings.yaml` 中写入 namespace `dsh-embedded-workbench`，其 `capabilities` map 使用完整键 `"reference.lifecycle"` 且 `enabled: false`，执行：
 
@@ -993,15 +993,15 @@ git commit -m "test: verify one-command M2 distribution"
 
 同一个 Core 下挂健康 fixture 与启动失败 fixture，使用真实 Cordis 4.0.1。断言健康 Fiber ACTIVE、失败项 FAILED、Core Fiber ACTIVE；随后制造 cleanup failure，Core 仍逐项 dispose，健康项资源归零。
 
-- [ ] **步骤 2：补齐静态 verify:m2**
+- [x] **步骤 2：补齐静态 verify:m2**
 
 `verify-m2.ps1` 必须检查：五包身份/版本、根包单 row、Provider 零互依赖、Core/UI 不 import Provider 私有路径、generated Typert 三方法、设置 namespace 唯一、无 `defineTool/ctx.tools/registerTool`、无循环 timer、声明的 pack 文件全部存在。该脚本不得调用 `npm pack`，避免被根 `prepack` 递归触发；真实 pack 清单由步骤 4 单独验证。
 
-- [ ] **步骤 3：修订 M0/M1 回归门**
+- [x] **步骤 3：修订 M0/M1 回归门**
 
 M0 保留：唯一 Loader row、唯一 Settings section、零 Tool、精确卸载。M1 保留：每 Fiber 一个 lifecycle、逆序清理、失败回滚、幂等、超时诊断；断言位置改为 Reference Provider，不再要求根包零 dependency 或零 Remote。
 
-- [ ] **步骤 4：运行完整自动验证**
+- [x] **步骤 4：运行完整自动验证**
 
 ```powershell
 npm run build
