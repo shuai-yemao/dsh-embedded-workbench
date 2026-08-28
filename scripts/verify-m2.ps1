@@ -22,7 +22,8 @@ try {
 	$optionalNames = @($rootManifest.optionalDependencies.PSObject.Properties.Name)
 	Assert-Condition (($optionalNames.Count -eq 1) -and ($optionalNames[0] -ceq "@dsh-embedded/provider-reference")) "Reference must be the only optional package"
 	$clientInject = @($rootManifest.dsh.client.inject)
-	Assert-Condition (($clientInject.Count -eq 2) -and ($clientInject[0] -ceq "@deepseek-ai/dsh-api-gateway") -and ($clientInject[1] -ceq "@dsh-embedded/workbench-ui")) "Unexpected Bundle Client injection"
+	$expectedClientInject = @("@deepseek-ai/dsh-api-gateway", "@deepseek-ai/dsh-client-runtime", "@deepseek-ai/dsh-client-ui-settings")
+	Assert-Condition (($clientInject.Count -eq $expectedClientInject.Count) -and (@($clientInject | Where-Object { $_ -notin $expectedClientInject }).Count -eq 0) -and (@($expectedClientInject | Where-Object { $_ -notin $clientInject }).Count -eq 0)) "Unexpected Bundle Client injection"
 
 	$packagePaths = @(
 		"package.json",

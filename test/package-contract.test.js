@@ -24,7 +24,11 @@ test("package exposes one M2 Bundle with a generated Client artifact", async () 
 	assert.deepEqual(manifest.dsh, {
 		bundle: { patch: "./cordis.patch.yml" },
 		client: {
-			inject: ["@deepseek-ai/dsh-api-gateway", "@dsh-embedded/workbench-ui"],
+			inject: [
+				"@deepseek-ai/dsh-api-gateway",
+				"@deepseek-ai/dsh-client-runtime",
+				"@deepseek-ai/dsh-client-ui-settings"
+			],
 			platform: "web"
 		}
 	});
@@ -35,7 +39,7 @@ test("package exposes one M2 Bundle with a generated Client artifact", async () 
 	]);
 	assert.deepEqual(manifest.optionalDependencies, { "@dsh-embedded/provider-reference": "0.0.0" });
 	assert.deepEqual(manifest.peerDependencies, { "@deepseek-ai/cordis": "4.0.1" });
-	assert.equal(manifest.dsh.client.inject.includes("@deepseek-ai/dsh-client-runtime"), false);
+	assert.equal(manifest.dsh.client.inject.some(packageName => packageName.startsWith("@dsh-embedded/")), false);
 	assert.equal(manifest.scripts.build, "tsc -b && node scripts/generate-typert.mjs && node scripts/build-client.mjs");
 });
 
