@@ -71,7 +71,7 @@ T-012 rc.2 最终验证与交接
 | 8 | T-008 | 将根包收敛为 Bundle 装配层 | T-007 | `system-architect` | `mcu-workbench:workflow-ai-collab` | `mcu-workbench:tools-build` | static/host/build | pass |
 | 9 | T-009 | 实现 UI Controller 状态同步 | T-008 | `firmware-engineer` | `mcu-workbench:tdd` | `mcu-workbench:frontend-excellence` | host | pass |
 | 10 | T-010 | 实现 Settings UI 与持续错误提示 | T-009 | `firmware-engineer` | `mcu-workbench:frontend-excellence` | `mcu-workbench:tdd` | host/build | pass |
-| 11 | T-011 | 执行一次安装分发阻断门 | T-010 | `verification-engineer` | `mcu-workbench:tools-verification` | `mcu-workbench:tools-build` | static/build/runtime | not-run |
+| 11 | T-011 | 执行一次安装分发阻断门 | T-010 | `verification-engineer` | `mcu-workbench:tools-verification` | `mcu-workbench:tools-build` | static/build/runtime | in-progress |
 | 12 | T-012 | 完成 rc.2 隔离、回归和最终交接 | T-011 | `verification-engineer` | `mcu-workbench:tools-verification` | `mcu-workbench:workflow-final-review` | static/host/build/runtime/UI | not-run |
 
 ## 4. 任务详情
@@ -446,7 +446,7 @@ T-012 rc.2 最终验证与交接
 | supporting_skills | `mcu-workbench:tools-build`, `mcu-workbench:tools-quality` |
 | allocation_evidence | 一次 add、Optional 缺失、精确 remove 和设置保留是版本化分发阻断门。 |
 | confidence | `unverified` |
-| status | `not-run` |
+| status | `in-progress` |
 
 #### 目标、步骤与边界
 
@@ -465,7 +465,7 @@ T-012 rc.2 最终验证与交接
 | 证据等级 | `static/build/runtime` |
 | 命令或条件 | `npm run verify:m2:runtime` |
 | 预期结果 | JSON 中 `install_one_command`、`optional_missing_degraded`、`settings_preserved`、`other_profile_hash_unchanged` 全为 true。 |
-| 当前状态 | `not-run` |
+| 当前状态 | `in-progress`：`npm run verify:m2` 静态/构建门通过。当前主机没有 `dsh` 命令，指定的只读 `D:\deepseek-harness-rc2` checkout 也没有 `node_modules`，因此没有可验证的 rc.2 CLI 来执行真实 `plugin add/remove`；未创建 Mock 替代。 |
 
 - 阻断：Optional 缺失导致 add 非零、settings 被 remove 清除或其他 profile/hash 变化时立即停止。
 - 回滚：仅精确停止本轮 PID、移除本轮 package/profile；不得递归删除未验证路径。
@@ -522,7 +522,7 @@ T-012 rc.2 最终验证与交接
 | T-008 | 单 Bundle 装配 | static/host/build | 4 root tests + `npm run build` + ModuleLoader VM probe | 单 row；声明式 Provider；Host/Core 和 Client/Remote 均使用 rc.2 seam | pass |
 | T-009 | UI 状态同步资源有界 | host | Controller 4 fake-clock tests + UI `tsc --noEmit` | 500 ms×20 上限、写入冲突保留 Host、timer/订阅对称 | pass |
 | T-010 | Settings UI 持续错误/重启提示 | host/build | UI/Controller 5 tests + `npm run build` + UI ModuleLoader VM test | 持续不可用、只读禁用、restart 提示、确认 reset | pass |
-| T-011 | 一次安装和精确卸载 | runtime | `verify:m2:runtime` | Optional 缺失可降级、设置保留 | not-run |
+| T-011 | 一次安装和精确卸载 | static/build/runtime | `verify:m2` 通过；`verify:m2:runtime` 等待真实 rc.2 CLI | 静态 Bundle/pack 边界通过；一次 add、Optional 缺失和 Settings 保留尚未验证 | in-progress |
 | T-012 | 全量回归与人工 UI | static/host/build/runtime/UI | 全门禁 + UI checklist | V-M2-01..20 闭合 | not-run |
 
 静态、主机、构建、Desktop rc.2 runtime、UI 人工、目标板和实物证据必须分开。M2 不涉及 MCU，target board/physical 固定为 `not_applicable`。
@@ -538,6 +538,7 @@ T-012 rc.2 最终验证与交接
 | B-M2-05 | 风险/非阻断 | UI 人工验收需要隔离 rc.2 Web 实例 | T-012 | 自动门通过后启动隔离 Web 并记录观察 | open |
 | B-M2-06 | 已知回归迁移 | T-001 的 M2 workspace/精确依赖/prepack 已与旧 M0/M1“单包、零 dependency/Remote、rc.1”断言冲突；完整根 `npm test`/`verify:m0`/pack 暂非通过证据 | T-012 | 按 Plan 任务12 重写为 M2 合法的单 row、零 Tool、Reference lifecycle、精确 pack 回归；T-007/T-008 补齐 build/prepack 脚本后复跑 | open |
 | B-M2-07 | 已解决/用户确认 | 原 camelCase namespace 被 rc.2 `settingsNamespace()` 拒绝；用户于 2026-08-28 确认采用已实测合法的 `dsh-embedded-workbench` | T-006..T-012 | Spec/Plan/task v0.2 已同步；T-006 仅使用真实 Settings seam 实施 | closed |
+| B-M2-08 | 环境阻断 | 当前主机未发现 `dsh` CLI；`D:\deepseek-harness-rc2` 是只读源码 checkout，未安装 `node_modules`，不能作为真实 `plugin add/remove` runtime | T-011/T-012 | 提供或恢复与 rc.2 匹配的 DSH Desktop bundled Node/CLI 后，在新临时 `DSH_HOME` 和本地 registry 执行计划中的一次 add/remove | open/blocking |
 
 ## 7. SOLID 固定交接
 

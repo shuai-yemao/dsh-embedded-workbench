@@ -914,7 +914,7 @@ git commit -m "feat: add isolated capability settings UI"
 - 创建：`scripts/verify-m2-runtime.ps1`
 - 创建：`test/runtime/m2-install.test.js`
 
-- [ ] **步骤 1：先建立无递归的静态 pack 前置门**
+- [x] **步骤 1：先建立无递归的静态 pack 前置门**
 
 实现 `scripts/verify-m2.ps1` 的 package/exports/files、依赖方向、Typert 三方法、唯一 namespace 和零 Tool 检查。它只读取 manifest 与构建产物，不调用 `npm pack`，保证根 `prepack` 可被后续 registry fixture 安全调用。
 
