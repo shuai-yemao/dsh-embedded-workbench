@@ -21,6 +21,7 @@ test("generated root Client composes the Remote mount and embedded Settings sect
 	assert.deepEqual(Array.from(client.inject), ["remote"]);
 	assert.equal(typeof client.apply, "function");
 	const operations = [];
+	let dynamicDependencies;
 	const context = {
 		remote: {
 			$mount: async () => { operations.push("remote.mount"); },
@@ -39,7 +40,11 @@ test("generated root Client composes the Remote mount and embedded Settings sect
 			}),
 		},
 		on: () => () => {},
-		inject: (_deps, callback) => { operations.push("context.inject"); return callback(context); },
+		inject: (deps, callback) => {
+			dynamicDependencies = Array.from(deps);
+			operations.push("context.inject");
+			return callback(context);
+		},
 		effect: async callback => { operations.push("effect"); await callback(); },
 		slots: {
 			inject: (_name, callback) => { operations.push("slots.inject"); return callback(); },
@@ -47,6 +52,7 @@ test("generated root Client composes the Remote mount and embedded Settings sect
 		},
 	};
 	await client.apply(context);
+	assert.deepEqual(dynamicDependencies, ["slots", "settingsScope", "remote", "remote.workbenchCapabilities"]);
 	assert.deepEqual(operations, ["remote.mount", "context.inject", "effect", "slots.inject", "slots.register"]);
 	assert.equal("WebSocket" in window, false);
 	assert.equal("addEventListener" in window, false);
