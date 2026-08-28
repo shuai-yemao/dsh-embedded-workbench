@@ -63,8 +63,8 @@ test("test-only tool snapshot fixture stays outside the product package", () => 
 	assert.doesNotMatch(JSON.stringify(rootManifest), /tool-snapshot|dsh-tools/);
 	assert.deepEqual(rootManifest.files, [
 		"src/index.js",
-		"src/client.js",
-		"src/workbench-lifecycle.js",
+		"src/providers.js",
+		"lib/client.js",
 		"cordis.patch.yml"
 	]);
 
