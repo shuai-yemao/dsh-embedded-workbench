@@ -72,7 +72,7 @@ T-012 rc.2 最终验证与交接
 | 9 | T-009 | 实现 UI Controller 状态同步 | T-008 | `firmware-engineer` | `mcu-workbench:tdd` | `mcu-workbench:frontend-excellence` | host | pass |
 | 10 | T-010 | 实现 Settings UI 与持续错误提示 | T-009 | `firmware-engineer` | `mcu-workbench:frontend-excellence` | `mcu-workbench:tdd` | host/build | pass |
 | 11 | T-011 | 执行一次安装分发阻断门 | T-010 | `verification-engineer` | `mcu-workbench:tools-verification` | `mcu-workbench:tools-build` | static/build/runtime | in-progress |
-| 12 | T-012 | 完成 rc.2 隔离、回归和最终交接 | T-011 | `verification-engineer` | `mcu-workbench:tools-verification` | `mcu-workbench:workflow-final-review` | static/host/build/runtime/UI | not-run |
+| 12 | T-012 | 完成 rc.2 隔离、回归和最终交接 | T-011 | `verification-engineer` | `mcu-workbench:tools-verification` | `mcu-workbench:workflow-final-review` | static/host/build/runtime/UI | in-progress |
 
 ## 4. 任务详情
 
@@ -484,7 +484,7 @@ T-012 rc.2 最终验证与交接
 | supporting_skills | `mcu-workbench:workflow-final-review`, `mcu-workbench:tools-quality` |
 | allocation_evidence | 最终任务闭合真实 Cordis、rc.2 runtime、UI、pack、零 Tool、回归和 SOLID 证据。 |
 | confidence | `confirmed` |
-| status | `not-run` |
+| status | `in-progress` |
 
 #### 目标、步骤与边界
 
@@ -503,7 +503,7 @@ T-012 rc.2 最终验证与交接
 | 证据等级 | `static/host/build/runtime/UI`；target board/physical=`not_applicable` |
 | 命令或条件 | `npm run build`; `npm test`; `npm run verify:m0`; `npm run verify:m1`; `npm run verify:m2`; `npm run verify:m2:runtime`; `npm pack --dry-run --json`; `git diff --check`；隔离 Web UI 人工验收 |
 | 预期结果 | 自动门全 0；UI 契约通过；无 Tool 增量、timer、悬挂 disposer、unhandled rejection；兄弟能力隔离成立。 |
-| 当前状态 | `not-run` |
+| 当前状态 | `in-progress`：自动门已通过：`npm run build`、`npm test`（48 项）、`verify:m0`、`verify:m1`、`verify:m2`、`verify:m2:runtime` 与 `npm pack --dry-run --json`。待补仅为真实缺失 Optional 的 Host snapshot 投影及隔离 Web UI 人工观察；不以安装/HTTP/主机测试替代 UI 证据。 |
 
 - 回滚：按独立任务 commit 逆序 revert；整体锚点为本 task 文档提交后的执行基线。
 - 回传：任何 Spec 不变量变化或证据不足，交回 `workflow-review-gate`；代码完成后交 `workflow-final-review`。
